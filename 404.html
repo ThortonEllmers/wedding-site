@@ -27,13 +27,16 @@
     }
 
     .card {
-      background-color: rgba(255, 255, 255, 0.85);
+      background: rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       padding: 2rem;
       border-radius: 20px;
       text-align: center;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
       max-width: 90%;
       width: 400px;
+      margin: 1rem;
     }
 
     h1 {
@@ -111,6 +114,7 @@
 
       .card {
         padding: 1.5rem;
+        margin: 1rem;
         width: 90%;
       }
     }

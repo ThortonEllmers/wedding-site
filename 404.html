@@ -37,8 +37,8 @@
       border-radius: 24px;
       text-align: center;
       box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
-      max-width: 90%;
-      width: 400px;
+      max-width: 95%;
+      width: 500px; /* 💡 slightly wider */
       margin: 1rem;
       color: #ffffff;
       z-index: 1;
@@ -46,7 +46,7 @@
 
     h1 {
       font-family: 'Dancing Script', cursive;
-      font-size: 4rem;
+      font-size: 6rem; /* ✅ bigger */
       margin: 0;
       animation: popIn 0.5s ease-out;
     }
@@ -137,191 +137,7 @@
 
     @media (max-width: 600px) {
       h1 {
-        font-size: 3rem;
-      }
-
-      p {
-        font-size: 1.1rem;
-      }
-
-      .date, .countdown {
-        font-size: 0.95rem;
-      }
-
-      .card {
-        padding: 1.5rem;
-        margin: 1rem;
-        width: 90%;
-      }
-    }
-  </style>
-</head>
-<body>
-  <div class="card">
-    <h1>Whoops!</h1>
-    <div class="heart">💙</div>
-    <p>Redirecting you to the wedding of Sam & Annabelle</p>
-    <div class="date">12 July 2025 at 2:00 PM</div>
-    <div class="countdown" id="countdown">Loading countdown...</div>
-    <a href="https://samandannabelle.live">Click here if you're not redirected</a>
-  </div>
-
-  <script>
-    const countdownEl = document.getElementById("countdown");
-    const weddingDate = new Date("2025-07-12T14:00:00");
-
-    function updateCountdown() {
-      const now = new Date();
-      const diff = weddingDate - now;
-
-      if (diff <= 0) {
-        countdownEl.textContent = "It's wedding time!";
-        return;
-      }
-
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-      const minutes = Math.floor((diff / (1000 * 60)) % 60);
-      const second<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="refresh" content="10; url=https://samandannabelle.live" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lost in Love</title>
-  <style>
-    @font-face {
-      font-family: 'Dancing Script';
-      font-style: normal;
-      font-weight: 400;
-      src: url(data:font/woff2;charset=utf-8;base64,d09GMgABAAAAAAZ4ABAAAAAAa5wAAANmAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHEIGVgCDWIBSM2YZATYCJAMQCwoABCAFhG0HQxtEBkUaNQaMQLyNLxgAAAZgIAAAKAAAABAAAEAAAAAAAAAAAAAAAAAAAAAAACAAEAAAABAACAAAAAAUAAAAAAAAAAAAAAAEAAQAAAAUAAABgAAAAAgAAAAAAAAMAAQAAABQAAABQAAAAAAAAAAEAAAAAAAEAAACaAAAAAgAAAAMAAAACAAUAAQAAAAAAAAAIAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwAAAAQAAQAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA) format('woff2');
-    }
-
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Georgia', serif;
-      background: linear-gradient(135deg, #547aa5, #1a2b52);
-      color: #1a2b52;
-      overflow: hidden;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      animation: fadeIn 1s ease-out;
-      position: relative;
-    }
-
-    .card {
-      background: rgba(173, 216, 255, 0.2);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 4px solid rgba(255, 255, 255, 0.6);
-      padding: 2rem;
-      border-radius: 24px;
-      text-align: center;
-      box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
-      max-width: 90%;
-      width: 400px;
-      margin: 1rem;
-      color: #ffffff;
-      z-index: 1;
-    }
-
-    h1 {
-      font-family: 'Dancing Script', cursive;
-      font-size: 4rem;
-      margin: 0;
-      animation: popIn 0.5s ease-out;
-    }
-
-    p {
-      font-size: 1.3rem;
-      margin: 0.5rem 0 1rem 0;
-    }
-
-    .date {
-      font-size: 1.1rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .countdown {
-      font-size: 1.2rem;
-      font-family: monospace;
-      margin-bottom: 2rem;
-    }
-
-    .heart {
-      color: #1976d2;
-      font-size: 2rem;
-      animation: heartbeat 1.5s infinite;
-    }
-
-    a {
-      color: #1a2b52;
-      background-color: #90caf9;
-      text-decoration: none;
-      border: none;
-      padding: 0.7rem 1.4rem;
-      border-radius: 30px;
-      font-size: 1rem;
-      transition: background 0.3s ease;
-      display: inline-block;
-    }
-
-    a:hover {
-      background-color: #64b5f6;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes popIn {
-      from { opacity: 0; transform: scale(0.8); }
-      to { opacity: 1; transform: scale(1); }
-    }
-
-    @keyframes heartbeat {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.2); }
-    }
-
-    /* 🎉 Confetti */
-    .confetti {
-      position: fixed;
-      top: -20px;
-      width: 10px;
-      height: 10px;
-      background-color: red;
-      opacity: 0;
-      animation: confettiFall ease-in-out forwards;
-      z-index: 0;
-      pointer-events: none;
-      border-radius: 2px;
-    }
-
-    @keyframes confettiFall {
-      0% {
-        transform: translateY(0) rotate(0deg);
-        opacity: 0;
-      }
-      10% {
-        opacity: 1;
-      }
-      90% {
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(110vh) rotate(720deg);
-        opacity: 0;
-      }
-    }
-
-    @media (max-width: 600px) {
-      h1 {
-        font-size: 3rem;
+        font-size: 4.5rem; /* ✅ bigger on mobile too */
       }
 
       p {
@@ -367,29 +183,6 @@
       const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
       const minutes = Math.floor((diff / (1000 * 60)) % 60);
       const seconds = Math.floor((diff / 1000) % 60);
-
-      countdownEl.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s remaining`;
-    }
-
-    updateCountdown();
-    setInterval(updateCountdown, 1000);
-
-    // 🎉 Confetti generator
-    const colors = ['#ffffff', '#90caf9', '#f48fb1', '#81c784', '#ffd54f', '#ce93d8'];
-    for (let i = 0; i < 75; i++) {
-      const confetti = document.createElement('div');
-      confetti.classList.add('confetti');
-      confetti.style.left = Math.random() * 100 + 'vw';
-      confetti.style.animationDuration = (Math.random() * 3 + 4) + 's';
-      confetti.style.width = confetti.style.height = Math.random() * 8 + 6 + 'px';
-      confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-      confetti.style.animationDelay = Math.random() * 4 + 's';
-      document.body.appendChild(confetti);
-    }
-  </script>
-</body>
-</html>
-s = Math.floor((diff / 1000) % 60);
 
       countdownEl.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s remaining`;
     }

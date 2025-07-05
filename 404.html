@@ -10,8 +10,8 @@
       margin: 0;
       padding: 0;
       font-family: 'Georgia', serif;
-      background: linear-gradient(135deg, #fce4ec, #f8bbd0);
-      color: #4e2a2a;
+      background: linear-gradient(135deg, #d0e7ff, #80b3ff);
+      color: #1a2a3a;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -47,14 +47,14 @@
     }
 
     .heart {
-      color: #e91e63;
+      color: #1976d2;
       font-size: 2rem;
       animation: heartbeat 1.5s infinite;
     }
 
     a {
       color: #fff;
-      background-color: #e91e63;
+      background-color: #1976d2;
       text-decoration: none;
       border: none;
       padding: 0.7rem 1.4rem;
@@ -64,7 +64,7 @@
     }
 
     a:hover {
-      background-color: #c2185b;
+      background-color: #0d47a1;
     }
 
     @keyframes fadeIn {
@@ -99,7 +99,7 @@
 </head>
 <body>
   <h1>Whoops!</h1>
-  <div class="heart">❤️</div>
+  <div class="heart">💙</div>
   <p>Redirecting you to the wedding of Sam & Annabelle</p>
   <div class="date">Save the Date: 12 July 2025 at 2:00 PM</div>
   <div class="countdown" id="countdown">Loading countdown...</div>
@@ -123,7 +123,7 @@
       const minutes = Math.floor((diff / (1000 * 60)) % 60);
       const seconds = Math.floor((diff / 1000) % 60);
 
-      countdownEl.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s until the wedding begins`;
+      countdownEl.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s until the wedding begins 💍`;
     }
 
     updateCountdown();

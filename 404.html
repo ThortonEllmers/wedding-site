@@ -18,14 +18,14 @@
       padding: 0;
       font-family: 'Georgia', serif;
       background: linear-gradient(135deg, #547aa5, #1a2b52);
-      color: #1a2b52;
+      color: #ffffff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
       animation: fadeIn 1s ease-out;
-      display: grid;
-      place-items: center;
-      min-height: 100vh;
+      overflow: hidden;
       position: relative;
-      padding-bottom: 60px; /* Reserve space for footer */
-      box-sizing: border-box;
     }
 
     .card {
@@ -89,19 +89,6 @@
       background-color: #64b5f6;
     }
 
-    footer {
-      position: absolute;
-      bottom: 10px;
-      width: 100%;
-      text-align: center;
-      font-size: 0.8rem;
-      color: #ffffffa0;
-      font-family: monospace;
-      line-height: 1.4;
-      z-index: 1;
-      pointer-events: none;
-    }
-
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(-10px); }
       to { opacity: 1; transform: translateY(0); }
@@ -147,6 +134,18 @@
       }
     }
 
+    footer {
+      position: fixed;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #ffffffa0;
+      font-family: monospace;
+      line-height: 1.4;
+      z-index: 5;
+    }
+
     @media (max-width: 600px) {
       h1 {
         font-size: 4.5rem;
@@ -179,8 +178,8 @@
   </div>
 
   <footer>
-    ServerRID: ECs09c117 LocationID: HB4285<br>
-    © 2025 EllmersConsulting. All rights reserved.
+    ServerRID: ECs09c117 LocationID: HB4285<br />
+    &copy; 2025 EllmersConsulting. All rights reserved.
   </footer>
 
   <script>
@@ -201,7 +200,7 @@
       const minutes = Math.floor((diff / (1000 * 60)) % 60);
       const seconds = Math.floor((diff / 1000) % 60);
 
-      countdownEl.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+      countdownEl.textContent = `${days}d  ${hours}h  ${minutes}m  ${seconds}s`;
     }
 
     updateCountdown();

@@ -38,7 +38,7 @@
       text-align: center;
       box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
       max-width: 95%;
-      width: 500px; /* 💡 slightly wider */
+      width: 500px;
       margin: 1rem;
       color: #ffffff;
       z-index: 1;
@@ -46,7 +46,7 @@
 
     h1 {
       font-family: 'Dancing Script', cursive;
-      font-size: 6rem; /* ✅ bigger */
+      font-size: 6rem;
       margin: 0;
       animation: popIn 0.5s ease-out;
     }
@@ -104,7 +104,6 @@
       50% { transform: scale(1.2); }
     }
 
-    /* 🎉 Confetti */
     .confetti {
       position: fixed;
       top: -20px;
@@ -135,9 +134,22 @@
       }
     }
 
+    footer {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #ffffffa0;
+      font-family: monospace;
+      line-height: 1.4;
+      z-index: 1;
+      pointer-events: none;
+    }
+
     @media (max-width: 600px) {
       h1 {
-        font-size: 4.5rem; /* ✅ bigger on mobile too */
+        font-size: 4.5rem;
       }
 
       p {
@@ -166,6 +178,11 @@
     <a href="https://samandannabelle.live">Click to redirect</a>
   </div>
 
+  <footer>
+    ServerRID: ECs09c117 LocationID: HB4285<br>
+    © 2025 EllmersConsulting. All rights reserved.
+  </footer>
+
   <script>
     const countdownEl = document.getElementById("countdown");
     const weddingDate = new Date("2025-07-12T14:00:00");
@@ -190,7 +207,6 @@
     updateCountdown();
     setInterval(updateCountdown, 1000);
 
-    // 🎉 Confetti generator
     const colors = ['#ffffff', '#90caf9', '#f48fb1', '#81c784', '#ffd54f', '#ce93d8'];
     for (let i = 0; i < 75; i++) {
       const confetti = document.createElement('div');

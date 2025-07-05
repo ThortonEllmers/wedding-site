@@ -25,6 +25,7 @@
       align-items: center;
       height: 100vh;
       animation: fadeIn 1s ease-out;
+      position: relative;
     }
 
     .card {
@@ -103,6 +104,37 @@
       50% { transform: scale(1.2); }
     }
 
+    /* 🎉 Confetti */
+    .confetti {
+      position: fixed;
+      top: -20px;
+      width: 10px;
+      height: 10px;
+      background-color: red;
+      opacity: 0;
+      animation: confettiFall ease-in-out forwards;
+      z-index: 0;
+      pointer-events: none;
+      border-radius: 2px;
+    }
+
+    @keyframes confettiFall {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(110vh) rotate(720deg);
+        opacity: 0;
+      }
+    }
+
     @media (max-width: 600px) {
       h1 {
         font-size: 3rem;
@@ -122,28 +154,6 @@
         width: 90%;
       }
     }
-
-    /* 🎉 Confetti styling */
-    .confetti {
-      position: absolute;
-      width: 10px;
-      height: 10px;
-      background-color: red;
-      opacity: 0.8;
-      animation: fall linear infinite;
-      z-index: 0;
-    }
-
-    @keyframes fall {
-      0% {
-        transform: translateY(-10vh) rotate(0deg);
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(110vh) rotate(360deg);
-        opacity: 0;
-      }
-    }
   </style>
 </head>
 <body>
@@ -156,7 +166,6 @@
     <a href="https://samandannabelle.live">Click here if you're not redirected</a>
   </div>
 
-  <!-- 🎊 Confetti Container -->
   <script>
     const countdownEl = document.getElementById("countdown");
     const weddingDate = new Date("2025-07-12T14:00:00");
@@ -181,16 +190,16 @@
     updateCountdown();
     setInterval(updateCountdown, 1000);
 
-    // 🎉 Confetti generation
+    // 🎉 Confetti generator
     const colors = ['#ffffff', '#90caf9', '#f48fb1', '#81c784', '#ffd54f', '#ce93d8'];
     for (let i = 0; i < 75; i++) {
       const confetti = document.createElement('div');
       confetti.classList.add('confetti');
       confetti.style.left = Math.random() * 100 + 'vw';
-      confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+      confetti.style.animationDuration = (Math.random() * 3 + 4) + 's';
       confetti.style.width = confetti.style.height = Math.random() * 8 + 6 + 'px';
       confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-      confetti.style.animationDelay = Math.random() * 3 + 's';
+      confetti.style.animationDelay = Math.random() * 4 + 's';
       document.body.appendChild(confetti);
     }
   </script>

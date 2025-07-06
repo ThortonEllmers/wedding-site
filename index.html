@@ -21,10 +21,10 @@
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <script>
     const video = document.getElementById('wedding-video');
-    const hlsUrl = 'http://stream.samandannabelle.live/hls/wedding.m3u8';
+    const hlsUrl = 'https://stream.samandannabelle.live/hls/wedding.m3u8';
 
     if (Hls.isSupported()) {
-      const hls = new Hls();
+      const hls = new Hls({ lowLatencyMode: true });
       hls.loadSource(hlsUrl);
       hls.attachMedia(video);
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {

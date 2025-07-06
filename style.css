@@ -15,12 +15,12 @@ footer{
   color: rgb(255, 255, 255);
 }
 #player-box {
-  max-width: 900px;
+  max-width: 925px;
   margin: auto;
-  background: #fff;
-  padding: 20px;
-  border-radius: 16px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  background: #ffffff;
+  padding: 12px;
+  border-radius: 6px;
+  box-shadow: 0 0 2px rgba(0,0,0,0.1);
 }
 video {
   width: 100%;

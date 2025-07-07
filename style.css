@@ -10,9 +10,16 @@ body {
   font-size: 50px;
   font-family: "Oswald", sans-serif;
 }
-footer{
-  font-size: 22px;
-  color: rgb(255, 255, 255);
+footer {
+  position: fixed;
+  bottom: 10px;
+  width: 100%;
+  text-align: center;
+  font-size: 0.8rem;
+  color: #ffffffa0;
+  font-family: monospace;
+  line-height: 1.4;
+  z-index: 5;
 }
 #player-box {
   max-width: 900px;
@@ -37,7 +44,9 @@ video {
 #volume-slider {
   width: 200px;
 }
-a,p {
-  color: rgb(255, 255, 255);
+a,p,h2 {
+  color: #141414ad;
   font-weight: bold;
+  font-size: 20px;
+  font-family: "Oswald", sans-serif;
 }

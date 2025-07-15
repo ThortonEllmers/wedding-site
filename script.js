@@ -1,7 +1,7 @@
 const gallery = document.getElementById('gallery');
 const slide = document.getElementById('slide');
 const imageList = [];
-const maxPhotos = 100;
+const maxPhotos = 999;
 const extensions = ['jpg', 'jpeg', 'png', 'webp'];
 let currentIndex = 0;
 

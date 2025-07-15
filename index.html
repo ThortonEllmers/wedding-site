@@ -187,11 +187,12 @@
         const a = document.createElement('a');
         a.textContent = 'Save';
         a.href = src;
-        // Generate unique filename: samandannabelle.live-<UUID>.<ext>
+        // generate random 3–5 digit ID
+        const length = Math.floor(Math.random() * 3) + 3; // 3,4,5
+        const min = 10 ** (length - 1);
+        const max = 10 ** length - 1;
+        const id = Math.floor(Math.random() * (max - min + 1)) + min;
         const ext = src.split('.').pop();
-        const id = typeof crypto.randomUUID === 'function'
-          ? crypto.randomUUID()
-          : Date.now().toString(36) + Math.random().toString(36).slice(2);
         a.download = `samandannabelle.live-${id}.${ext}`;
         a.className = 'save-button';
 
@@ -228,7 +229,7 @@
 
     function updateSlide() {
       const fsImg = document.fullscreenElement;
-      if (fsImg && fsImg.tagName === 'IMG') {
+      if (fsImg?.tagName === 'IMG') {
         fsImg.style.opacity = 0;
         setTimeout(() => {
           fsImg.src = slideshowList[idx];
@@ -238,7 +239,7 @@
     }
 
     fsNextBtn.onclick = () => {
-      if (document.fullscreenElement && slideshowList.length > 0) {
+      if (document.fullscreenElement && slideshowList.length) {
         idx = (idx + 1) % slideshowList.length;
         updateSlide();
       }
@@ -252,15 +253,9 @@
     });
 
     document.addEventListener('keydown', e => {
-      if (document.fullscreenElement && slideshowList.length > 0) {
-        if (e.key === 'ArrowRight') { 
-          idx = (idx + 1) % slideshowList.length; 
-          updateSlide(); 
-        }
-        if (e.key === 'ArrowLeft') {
-          idx = (idx - 1 + slideshowList.length) % slideshowList.length; 
-          updateSlide(); 
-        }
+      if (document.fullscreenElement && slideshowList.length) {
+        if (e.key === 'ArrowRight') { idx = (idx + 1) % slideshowList.length; updateSlide(); }
+        if (e.key === 'ArrowLeft')  { idx = (idx - 1 + slideshowList.length) % slideshowList.length; updateSlide(); }
       }
     });
 
@@ -268,7 +263,7 @@
     document.addEventListener('touchstart', e => touchStartX = e.changedTouches[0].screenX);
     document.addEventListener('touchend', e => {
       touchEndX = e.changedTouches[0].screenX;
-      if (document.fullscreenElement && slideshowList.length > 0) {
+      if (document.fullscreenElement && slideshowList.length) {
         const diff = touchEndX - touchStartX;
         if (Math.abs(diff) > 50) {
           idx = diff < 0

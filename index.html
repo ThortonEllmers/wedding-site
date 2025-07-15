@@ -24,7 +24,7 @@
     }
     .gallery-section-title {
       font-family: 'Great Vibes', cursive;
-      font-size: 1.5em;
+      font-size: 1.8em;
       margin: 2em 0 1em;
       display: inline-block;
       border-bottom: 2px solid #fff;
@@ -245,8 +245,8 @@
       if (document.fullscreenElement && slideshowList.length) {
         const diff = touchEndX - touchStartX;
         if (Math.abs(diff) > 50) {
-          idx = diff < 0
-            ? (idx + 1) % slideshowList.length
+          idx = diff < 0 
+            ? (idx + 1) % slideshowList.length 
             : (idx - 1 + slideshowList.length) % slideshowList.length;
           updateSlide();
         }

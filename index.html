@@ -5,18 +5,19 @@
   <title>Sam and Annabelle’s Wedding Gallery</title>
   <!-- Script font for title -->
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
-  <!-- EXIF library -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/exif-js/2.3.0/exif.min.js"></script>
+  <!-- EXIF library (optional, not used for forced address) -->
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Segoe UI', sans-serif;
       text-align: center;
       padding: 2em 1em;
+      /* Soft blue gradient background */
       background: linear-gradient(135deg, #456B8B, #7DAFD8);
       color: #fff;
     }
     h1 {
+      /* Script font for title */
       font-family: 'Great Vibes', cursive;
       font-size: 3em;
       margin-bottom: .5em;
@@ -37,11 +38,18 @@
     }
     #slideshow img:hover { transform:scale(1.02); }
     .gallery, .portrait-gallery {
-      display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-      gap:20px; padding:0 1em; justify-items:center; margin-bottom:2em;
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+      gap:20px;
+      padding:0 1em;
+      justify-items:center;
+      margin-bottom:2em;
     }
     .image-wrapper {
-      display:flex; flex-direction:column; align-items:center; width:100%;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      width:100%;
     }
     .image-wrapper img {
       width:100%; max-width:180px; height:auto; object-fit:contain;
@@ -49,7 +57,9 @@
       box-shadow:0 4px 10px rgba(0,0,0,.1);
       cursor:pointer; transition:border-color .2s,transform .2s;
     }
-    .image-wrapper img:hover { border-color:#e0e0e0; transform:scale(1.05); }
+    .image-wrapper img:hover {
+      border-color:#e0e0e0; transform:scale(1.05);
+    }
     .location {
       font-size:.8em; color:#e0e0e0; margin-top:.4em;
     }
@@ -70,129 +80,172 @@
     .swipe-hint {
       position:fixed; bottom:80px; left:50%;
       transform:translateX(-50%); display:none;
-      align-items:center; gap:8px; background:rgba(0,0,0,.6);
-      color:#fff; font-size:14px; padding:8px 12px;
-      border-radius:8px; z-index:9999;
-      animation:fadeIn .6s ease-in-out;
+      align-items:center; gap:8px;
+      background:rgba(0,0,0,.6); color:#fff;
+      font-size:14px; padding:8px 12px; border-radius:8px;
+      z-index:9999; animation:fadeIn .6s ease-in-out;
     }
     .swipe-hint img { width:20px; height:20px; }
-    @keyframes fadeIn { from{opacity:0;transform:translate(-50%,20px);}to{opacity:1;transform:translate(-50%,0);} }
-    @media(max-width:768px){.image-wrapper{max-width:45%;}}
-    @media(max-width:480px){.image-wrapper{max-width:90%;}}
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translate(-50%, 20px); }
+      to { opacity: 1; transform: translate(-50%, 0); }
+    }
+    @media(max-width:768px){ .image-wrapper{ max-width:45%; } }
+    @media(max-width:480px){ .image-wrapper{ max-width:90%; } }
   </style>
 </head>
 <body>
   <h1>Sam and Annabelle’s Wedding Gallery</h1>
+
   <div id="slideshow">
     <img id="slide" src="" alt="Slideshow">
   </div>
+
   <div class="gallery-section-title">Gallery</div>
   <div class="gallery" id="gallery"></div>
+
   <div class="gallery-section-title">Portrait Photos</div>
   <div class="portrait-gallery" id="portrait-gallery"></div>
+
   <button id="fs-next-btn">Next</button>
   <div id="swipe-hint" class="swipe-hint">
     <img src="https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/chevron-left.svg" alt="Swipe Left" />
     Swipe left/right
     <img src="https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/chevron-right.svg" alt="Swipe Right" />
   </div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/exif-js/2.3.0/exif.min.js"></script>
+
   <script>
     const gallery = document.getElementById('gallery');
     const portraitGallery = document.getElementById('portrait-gallery');
     const slide = document.getElementById('slide');
     const fsNextBtn = document.getElementById('fs-next-btn');
     const swipeHint = document.getElementById('swipe-hint');
-    const imageList = Array.from({length:500},(_,i)=>`images/HotShots${i+1}.jpg`);
-    let idx=0, slideshowList=[];
-    function toDecimal(coords,ref){
-      const [deg,min,sec]=coords;
-      let dec=deg+min/60+sec/3600;
-      return (ref==='S'||ref==='W')?-dec:dec;
-    }
-    function addGallery(src){
-      const imgEl=new Image(); imgEl.src=src;
-      imgEl.onload=()=>{
-        const isPortrait=imgEl.naturalHeight>imgEl.naturalWidth*1.3;
-        const div=document.createElement('div'); div.className='image-wrapper';
-        const displayedImg=document.createElement('img');
-        displayedImg.src=src; displayedImg.loading='lazy';
-        displayedImg.onclick=()=>{openFull(displayedImg); idx=slideshowList.indexOf(src);};
-        const locationP=document.createElement('p');
-        locationP.className='location'; locationP.textContent='';
-        EXIF.getData(imgEl,function(){
-          const lat=EXIF.getTag(this,'GPSLatitude'),
-                lon=EXIF.getTag(this,'GPSLongitude'),
-                latRef=EXIF.getTag(this,'GPSLatitudeRef'),
-                lonRef=EXIF.getTag(this,'GPSLongitudeRef');
-          if(lat&&lon&&latRef&&lonRef){
-            const dlat=toDecimal(lat,latRef),
-                  dlon=toDecimal(lon,lonRef);
-            locationP.textContent=`Location: ${dlat.toFixed(5)}, ${dlon.toFixed(5)}`;
-          }
-        });
-        const a=document.createElement('a'); a.textContent='Save'; a.href=src;
-        const length=Math.floor(Math.random()*3)+3,
-              min=10**(length-1), max=10**length-1,
-              id=Math.floor(Math.random()*(max-min+1))+min,
-              ext=src.split('.').pop();
-        a.download=`samandannabelle.live-${id}.${ext}`;
-        a.className='save-button';
-        div.append(displayedImg,locationP,a);
-        if(isPortrait)portraitGallery.append(div);
-        else{gallery.append(div);slideshowList.push(src);}
-        if(slideshowList.length===1)startSlide();
+
+    const imageList = Array.from({ length: 500 }, (_, i) => `images/HotShots${i + 1}.jpg`);
+
+    let idx = 0;
+    let slideshowList = [];
+
+    function addGallery(src) {
+      const preloadImg = new Image();
+      preloadImg.src = src;
+      preloadImg.onload = () => {
+        const isPortrait = preloadImg.naturalHeight > preloadImg.naturalWidth * 1.3;
+
+        const div = document.createElement('div');
+        div.className = 'image-wrapper';
+
+        const img = document.createElement('img');
+        img.src = src;
+        img.loading = 'lazy';
+        img.onclick = () => {
+          openFull(img);
+          idx = slideshowList.indexOf(src);
+        };
+
+        const locationP = document.createElement('p');
+        locationP.className = 'location';
+        // Forced address for all photos
+        locationP.textContent = '638 Harewood Road, Harewood, Christchurch 8051';
+
+        const a = document.createElement('a');
+        a.textContent = 'Save';
+        a.href = src;
+        // generate random 3–5 digit ID
+        const length = Math.floor(Math.random() * 3) + 3; // 3, 4, or 5
+        const min = 10 ** (length - 1);
+        const max = 10 ** length - 1;
+        const id = Math.floor(Math.random() * (max - min + 1)) + min;
+        const ext = src.split('.').pop();
+        a.download = `samandannabelle.live-${id}.${ext}`;
+        a.className = 'save-button';
+
+        div.append(img, locationP, a);
+        if (isPortrait) {
+          portraitGallery.append(div);
+        } else {
+          gallery.append(div);
+          slideshowList.push(src);
+        }
+
+        if (slideshowList.length === 1) startSlide();
       };
     }
-    function startSlide(){
-      slide.src=slideshowList[0];slide.onclick=()=>openFull(slide);
-      setInterval(()=>{
-        idx=(idx+1)%slideshowList.length;
-        slide.style.opacity=0;
-        setTimeout(()=>{slide.src=slideshowList[idx];slide.style.opacity=1;},300);
-      },3000);
+
+    function startSlide() {
+      slide.src = slideshowList[0];
+      slide.onclick = () => openFull(slide);
+      setInterval(() => {
+        idx = (idx + 1) % slideshowList.length;
+        slide.style.opacity = 0;
+        setTimeout(() => {
+          slide.src = slideshowList[idx];
+          slide.style.opacity = 1;
+        }, 300);
+      }, 3000);
     }
-    function openFull(img){
-      if(img.requestFullscreen)img.requestFullscreen();
-      else if(img.webkitRequestFullscreen)img.webkitRequestFullscreen();
-      else if(img.msRequestFullscreen)img.msRequestFullscreen();
+
+    function openFull(img) {
+      if (img.requestFullscreen) img.requestFullscreen();
+      else if (img.webkitRequestFullscreen) img.webkitRequestFullscreen();
+      else if (img.msRequestFullscreen) img.msRequestFullscreen();
     }
-    function updateSlide(){
-      const fsImg=document.fullscreenElement;
-      if(fsImg&&fsImg.tagName==='IMG'){
-        fsImg.style.opacity=0;
-        setTimeout(()=>{fsImg.src=slideshowList[idx];fsImg.style.opacity=1;},300);
+
+    function updateSlide() {
+      const fsImg = document.fullscreenElement;
+      if (fsImg && fsImg.tagName === 'IMG') {
+        fsImg.style.opacity = 0;
+        setTimeout(() => {
+          fsImg.src = slideshowList[idx];
+          fsImg.style.opacity = 1;
+        }, 300);
       }
     }
-    fsNextBtn.onclick=()=>{
-      if(document.fullscreenElement&&slideshowList.length){
-        idx=(idx+1)%slideshowList.length;
+
+    fsNextBtn.onclick = () => {
+      if (document.fullscreenElement && slideshowList.length > 0) {
+        idx = (idx + 1) % slideshowList.length;
         updateSlide();
       }
     };
-    document.addEventListener('fullscreenchange',()=>{
-      const show=document.fullscreenElement?'block':'none';
-      fsNextBtn.style.display=show;swipeHint.style.display=show;
-      if(show==='block')setTimeout(()=>swipeHint.style.display='none',4000);
+
+    document.addEventListener('fullscreenchange', () => {
+      const show = document.fullscreenElement ? 'block' : 'none';
+      fsNextBtn.style.display = show;
+      swipeHint.style.display = show;
+      if (show === 'block') setTimeout(() => swipeHint.style.display = 'none', 4000);
     });
-    document.addEventListener('keydown',e=>{
-      if(document.fullscreenElement&&slideshowList.length){
-        if(e.key==='ArrowRight'){idx=(idx+1)%slideshowList.length;updateSlide();}
-        if(e.key==='ArrowLeft'){idx=(idx-1+slideshowList.length)%slideshowList.length;updateSlide();}
-      }
-    });
-    let touchStartX=0,touchEndX=0;
-    document.addEventListener('touchstart',e=>touchStartX=e.changedTouches[0].screenX);
-    document.addEventListener('touchend',e=>{
-      touchEndX=e.changedTouches[0].screenX;
-      if(document.fullscreenElement&&slideshowList.length){
-        const diff=touchEndX-touchStartX;
-        if(Math.abs(diff)>50){
-          idx=diff<0?(idx+1)%slideshowList.length:(idx-1+slideshowList.length)%slideshowList.length;
+
+    document.addEventListener('keydown', (e) => {
+      if (document.fullscreenElement && slideshowList.length > 0) {
+        if (e.key === 'ArrowRight') {
+          idx = (idx + 1) % slideshowList.length;
+          updateSlide();
+        }
+        if (e.key === 'ArrowLeft') {
+          idx = (idx - 1 + slideshowList.length) % slideshowList.length;
           updateSlide();
         }
       }
     });
+
+    let touchStartX = 0, touchEndX = 0;
+    document.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    });
+    document.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      if (document.fullscreenElement && slideshowList.length > 0) {
+        const diff = touchEndX - touchStartX;
+        if (Math.abs(diff) > 50) {
+          idx = diff < 0
+            ? (idx + 1) % slideshowList.length
+            : (idx - 1 + slideshowList.length) % slideshowList.length;
+          updateSlide();
+        }
+      }
+    });
+
     imageList.forEach(addGallery);
   </script>
 </body>

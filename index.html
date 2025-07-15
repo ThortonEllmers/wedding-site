@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Sam and Annabelle’s Wedding Gallery</title>
+  <title>Sam and Annabelle’s\nWedding Gallery</title>
   <!-- Script font for title & section headings -->
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
   <!-- Piexifjs for writing EXIF metadata -->
@@ -37,6 +37,7 @@
       cursor: pointer; transition: transform .3s, opacity .5s;
     }
     #slideshow img:hover { transform: scale(1.02); }
+
     .gallery, .portrait-gallery, .video-gallery {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(160px,1fr));
@@ -47,7 +48,18 @@
       display: flex; flex-direction: column; align-items: center;
       width: 100%;
     }
-    .image-wrapper img,
+
+    /* Portrait images keep natural aspect ratio */
+    .image-wrapper img {
+      width: 100%; max-width: 180px;
+      height: auto;
+      object-fit: contain;
+      border: 3px solid #fff; border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,.1);
+      cursor: pointer; transition: border-color .2s, transform .2s;
+    }
+
+    /* Videos & embeds are 16:9 */
     .video-wrapper video,
     .video-wrapper iframe {
       width: 100%; max-width: 180px;
@@ -57,11 +69,13 @@
       cursor: pointer; transition: border-color .2s, transform .2s;
       object-fit: cover;
     }
+
     .image-wrapper img:hover,
     .video-wrapper video:hover,
     .video-wrapper iframe:hover {
       border-color: #e0e0e0; transform: scale(1.05);
     }
+
     .save-button {
       margin-top: .5em; padding: .4em .8em; font-size: .9em;
       background: #fff; color: #456B8B; border-radius: 6px;
@@ -69,6 +83,7 @@
       font-weight: bold; transition: background .2s;
     }
     .save-button:hover { background: #f0f0f0; }
+
     #fs-next-btn {
       display: none; position: fixed; bottom: 20px; right: 20px;
       padding: 10px 16px; font-size: 16px; background: #fff;
@@ -76,6 +91,7 @@
       font-weight: bold; transition: background .2s;
     }
     #fs-next-btn:hover { background: #f0f0f0; }
+
     .swipe-hint {
       position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
       display: none; align-items: center; gap: 8px;
@@ -88,8 +104,8 @@
       from { opacity: 0; transform: translate(-50%, 20px); }
       to   { opacity: 1; transform: translate(-50%, 0); }
     }
-    @media(max-width:768px){ .image-wrapper, .video-wrapper { max-width:45%; } }
-    @media(max-width:480px){ .image-wrapper, .video-wrapper { max-width:90%; } }
+    @media (max-width:768px) { .image-wrapper, .video-wrapper { max-width:45%; } }
+    @media (max-width:480px) { .image-wrapper, .video-wrapper { max-width:90%; } }
   </style>
 </head>
 <body>
@@ -133,38 +149,40 @@
         const dataURL = reader.result;
         const zeroth={}, exif={}, gps={};
         gps[piexif.GPSIFD.GPSVersionID]   = [2,3,0,0];
-        gps[piexif.GPSIFD.GPSLatitudeRef]  = forcedGPS.lat<0?'S':'N';
+        gps[piexif.GPSIFD.GPSLatitudeRef]  = forcedGPS.lat < 0 ? 'S' : 'N';
         gps[piexif.GPSIFD.GPSLatitude]     = toDMSRational(forcedGPS.lat);
-        gps[piexif.GPSIFD.GPSLongitudeRef] = forcedGPS.lon<0?'W':'E';
+        gps[piexif.GPSIFD.GPSLongitudeRef] = forcedGPS.lon < 0 ? 'W' : 'E';
         gps[piexif.GPSIFD.GPSLongitude]    = toDMSRational(forcedGPS.lon);
-        const exifObj={'0th':zeroth,Exif:exif,GPS:gps};
+        const exifObj = { '0th':zeroth, Exif:exif, GPS:gps };
         const exifBytes = piexif.dump(exifObj);
         const newDataURL = piexif.insert(exifBytes, dataURL);
         const parts = newDataURL.split(',');
         const mime = parts[0].match(/:(.*?);/)[1];
         const bstr = atob(parts[1]);
-        let n=bstr.length, u8=new Uint8Array(n);
-        while(n--) u8[n]=bstr.charCodeAt(n);
-        const newBlob=new Blob([u8],{type:mime});
-        const newURL=URL.createObjectURL(newBlob);
-        const length=Math.floor(Math.random()*3)+3;
-        const min=10**(length-1), max=10**length-1;
-        const id=Math.floor(Math.random()*(max-min+1))+min;
-        const ext=src.split('.').pop();
-        const filename=`samandannabelle.live-${id}.${ext}`;
-        const link=document.createElement('a');
-        link.href=newURL; link.download=filename;
-        document.body.appendChild(link); link.click(); document.body.removeChild(link);
+        let n = bstr.length, u8arr = new Uint8Array(n);
+        while(n--) u8arr[n] = bstr.charCodeAt(n);
+        const newBlob = new Blob([u8arr], { type: mime });
+        const newURL  = URL.createObjectURL(newBlob);
+        const length = Math.floor(Math.random()*3)+3;
+        const min    = 10**(length-1), max = 10**length-1;
+        const id     = Math.floor(Math.random()*(max-min+1))+min;
+        const ext    = src.split('.').pop();
+        const filename = `samandannabelle.live-${id}.${ext}`;
+        const link = document.createElement('a');
+        link.href = newURL; link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
       };
       reader.readAsDataURL(blob);
     }
 
-    const gallery = document.getElementById('gallery');
+    const gallery         = document.getElementById('gallery');
     const portraitGallery = document.getElementById('portrait-gallery');
-    const videoGallery = document.getElementById('video-gallery');
-    const slide = document.getElementById('slide');
-    const fsNextBtn = document.getElementById('fs-next-btn');
-    const swipeHint = document.getElementById('swipe-hint');
+    const videoGallery    = document.getElementById('video-gallery');
+    const slide           = document.getElementById('slide');
+    const fsNextBtn       = document.getElementById('fs-next-btn');
+    const swipeHint       = document.getElementById('swipe-hint');
 
     const imageList = Array.from({ length: 500 }, (_, i) => `images/HotShots${i+1}.jpg`);
     const videoList = [
@@ -179,13 +197,16 @@
       img.onload = () => {
         const isPortrait = img.naturalHeight > img.naturalWidth * 1.3;
         const div = document.createElement('div'); div.className = 'image-wrapper';
-        const el = document.createElement('img'); el.src = src; el.loading = 'lazy';
+        const el  = document.createElement('img'); el.src = src; el.loading = 'lazy';
         el.onclick = () => { openFull(el); idx = slideshowList.indexOf(src); };
-        const btn = document.createElement('a'); btn.textContent = 'Save'; btn.href = '#'; btn.className = 'save-button';
+        const btn = document.createElement('a');
+        btn.textContent = 'Save'; btn.href = '#'; btn.className = 'save-button';
         btn.onclick = e => { e.preventDefault(); downloadWithExif(src); };
         div.append(el, btn);
+
         if (isPortrait) portraitGallery.append(div);
         else { gallery.append(div); slideshowList.push(src); }
+
         if (slideshowList.length === 1) startSlide();
       };
     }
@@ -193,10 +214,10 @@
     function addVideo(src) {
       const div = document.createElement('div'); div.className = 'video-wrapper';
       let vid;
-      if (/drive\.google\.com/.test(src)) {
+      if (/drive\\.google\\.com/.test(src)) {
         vid = document.createElement('iframe');
         vid.src = src;
-        vid.allowfullscreen = true;
+        vid.allowFullscreen = true;
       } else {
         vid = document.createElement('video');
         vid.src = src;
@@ -204,7 +225,7 @@
       }
       vid.onclick = () => openFull(vid);
       const link = document.createElement('a');
-      link.textContent = 'Save'; link.href = src; link.download = '';
+      link.textContent = 'Download'; link.href = src; link.download = '';
       link.className = 'save-button';
       div.append(vid, link);
       videoGallery.append(div);
@@ -216,7 +237,10 @@
       setInterval(() => {
         idx = (idx + 1) % slideshowList.length;
         slide.style.opacity = 0;
-        setTimeout(() => { slide.src = slideshowList[idx]; slide.style.opacity = 1; }, 300);
+        setTimeout(() => {
+          slide.src = slideshowList[idx];
+          slide.style.opacity = 1;
+        }, 300);
       }, 3000);
     }
 
@@ -230,17 +254,24 @@
       const fsEl = document.fullscreenElement;
       if (fsEl && fsEl.tagName === 'IMG') {
         fsEl.style.opacity = 0;
-        setTimeout(() => { fsEl.src = slideshowList[idx]; fsEl.style.opacity = 1; }, 300);
+        setTimeout(() => {
+          fsEl.src = slideshowList[idx];
+          fsEl.style.opacity = 1;
+        }, 300);
       }
     }
 
     fsNextBtn.onclick = () => {
-      if (document.fullscreenElement && slideshowList.length) { idx = (idx + 1) % slideshowList.length; updateSlide(); }
+      if (document.fullscreenElement && slideshowList.length) {
+        idx = (idx + 1) % slideshowList.length;
+        updateSlide();
+      }
     };
 
     document.addEventListener('fullscreenchange', () => {
       const disp = document.fullscreenElement ? 'block' : 'none';
-      fsNextBtn.style.display = disp; swipeHint.style.display = disp;
+      fsNextBtn.style.display = disp;
+      swipeHint.style.display = disp;
       if (disp === 'block') setTimeout(() => swipeHint.style.display = 'none', 4000);
     });
 
@@ -258,7 +289,9 @@
       if (document.fullscreenElement && slideshowList.length) {
         const diff = endX - startX;
         if (Math.abs(diff) > 50) {
-          idx = diff < 0 ? (idx + 1) % slideshowList.length : (idx - 1 + slideshowList.length) % slideshowList.length;
+          idx = diff < 0
+            ? (idx + 1) % slideshowList.length
+            : (idx - 1 + slideshowList.length) % slideshowList.length;
           updateSlide();
         }
       }

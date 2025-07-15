@@ -1,8 +1,8 @@
 const gallery = document.getElementById('gallery');
 const slide = document.getElementById('slide');
 const imageList = [];
-const maxPhotos = 10000;
-const extensions = ['jpg'];
+const maxPhotos = 100;
+const extensions = ['jpg', 'jpeg', 'png', 'webp'];
 let currentIndex = 0;
 
 function checkImage(url) {
@@ -14,10 +14,15 @@ function checkImage(url) {
   });
 }
 
+function padNumber(num, length) {
+  return num.toString().padStart(length, '0');
+}
+
 async function loadImages() {
   for (let i = 1; i <= maxPhotos; i++) {
+    const baseName = `HotShot${padNumber(i, 3)}`;
     for (const ext of extensions) {
-      const url = `images/HotShots${i}.${ext}`;
+      const url = `images/${baseName}.${ext}`;
       const result = await checkImage(url);
       if (result) {
         imageList.push(result);

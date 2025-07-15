@@ -20,7 +20,7 @@ function padNumber(num, length) {
 
 async function loadImages() {
   for (let i = 1; i <= maxPhotos; i++) {
-    const baseName = `HotShot${padNumber(i, 3)}`;
+    const baseName = `HotShots${padNumber(i, 3)}`;
     for (const ext of extensions) {
       const url = `images/${baseName}.${ext}`;
       const result = await checkImage(url);

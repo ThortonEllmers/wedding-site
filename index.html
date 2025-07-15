@@ -32,27 +32,19 @@
     }
     #slideshow img {
       width: 90%; max-width: 900px;
-      border: 6px solid #fff;
-      border-radius: 12px;
-      margin-bottom: 2em;
-      box-shadow: 0 10px 20px rgba(0,0,0,.2);
-      cursor: pointer;
-      transition: transform .3s, opacity .5s;
+      border: 6px solid #fff; border-radius: 12px;
+      margin-bottom: 2em; box-shadow: 0 10px 20px rgba(0,0,0,.2);
+      cursor: pointer; transition: transform .3s, opacity .5s;
     }
     #slideshow img:hover { transform: scale(1.02); }
-
     .gallery, .portrait-gallery, .video-gallery {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(160px,1fr));
-      gap: 20px;
-      padding: 0 1em;
-      justify-items: center;
+      gap: 20px; padding: 0 1em; justify-items: center;
       margin-bottom: 2em;
     }
     .image-wrapper, .video-wrapper {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      display: flex; flex-direction: column; align-items: center;
       width: 100%;
     }
     .image-wrapper img, .video-wrapper video {
@@ -71,7 +63,6 @@
       font-weight: bold; transition: background .2s;
     }
     .save-button:hover { background: #f0f0f0; }
-
     #fs-next-btn {
       display: none; position: fixed; bottom: 20px; right: 20px;
       padding: 10px 16px; font-size: 16px; background: #fff;
@@ -79,7 +70,6 @@
       font-weight: bold; transition: background .2s;
     }
     #fs-next-btn:hover { background: #f0f0f0; }
-
     .swipe-hint {
       position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
       display: none; align-items: center; gap: 8px;
@@ -135,31 +125,30 @@
       const reader = new FileReader();
       reader.onload = () => {
         const dataURL = reader.result;
-        const zeroth = {}, exif = {}, gps = {};
+        const zeroth={}, exif={}, gps={};
         gps[piexif.GPSIFD.GPSVersionID]   = [2,3,0,0];
-        gps[piexif.GPSIFD.GPSLatitudeRef]  = forcedGPS.lat < 0 ? 'S' : 'N';
+        gps[piexif.GPSIFD.GPSLatitudeRef]  = forcedGPS.lat<0?'S':'N';
         gps[piexif.GPSIFD.GPSLatitude]     = toDMSRational(forcedGPS.lat);
-        gps[piexif.GPSIFD.GPSLongitudeRef] = forcedGPS.lon < 0 ? 'W' : 'E';
+        gps[piexif.GPSIFD.GPSLongitudeRef] = forcedGPS.lon<0?'W':'E';
         gps[piexif.GPSIFD.GPSLongitude]    = toDMSRational(forcedGPS.lon);
-        const exifObj = { '0th':zeroth, Exif:exif, GPS:gps };
+        const exifObj={'0th':zeroth,Exif:exif,GPS:gps};
         const exifBytes = piexif.dump(exifObj);
         const newDataURL = piexif.insert(exifBytes, dataURL);
         const parts = newDataURL.split(',');
         const mime = parts[0].match(/:(.*?);/)[1];
         const bstr = atob(parts[1]);
-        let n = bstr.length, u8arr = new Uint8Array(n);
-        while(n--) u8arr[n] = bstr.charCodeAt(n);
-        const newBlob = new Blob([u8arr], { type: mime });
-        const newURL  = URL.createObjectURL(newBlob);
-        const length = Math.floor(Math.random() * 3) + 3;
-        const min = 10**(length-1), max = 10**length-1;
-        const id = Math.floor(Math.random() * (max-min+1)) + min;
-        const ext = src.split('.').pop();
-        const filename = `samandannabelle.live-${id}.${ext}`;
-        const link = document.createElement('a');
-        link.href = newURL; link.download = filename;
-        document.body.appendChild(link);
-        link.click(); document.body.removeChild(link);
+        let n=bstr.length, u8=new Uint8Array(n);
+        while(n--) u8[n]=bstr.charCodeAt(n);
+        const newBlob=new Blob([u8],{type:mime});
+        const newURL=URL.createObjectURL(newBlob);
+        const length=Math.floor(Math.random()*3)+3;
+        const min=10**(length-1), max=10**length-1;
+        const id=Math.floor(Math.random()*(max-min+1))+min;
+        const ext=src.split('.').pop();
+        const filename=`samandannabelle.live-${id}.${ext}`;
+        const link=document.createElement('a');
+        link.href=newURL; link.download=filename;
+        document.body.appendChild(link); link.click(); document.body.removeChild(link);
       };
       reader.readAsDataURL(blob);
     }
@@ -172,6 +161,11 @@
     const swipeHint = document.getElementById('swipe-hint');
 
     const imageList = Array.from({ length: 500 }, (_, i) => `images/HotShots${i+1}.jpg`);
+    const videoList = [
+      'https://drive.google.com/uc?export=download&id=1K4jAhd5pNLvvCBZP7mfZho24SNS60o6A',
+      'https://drive.google.com/uc?export=download&id=1K1YyUSyQtdyggsid2puE1rYzbjZ7xzdD'
+    ];
+
     let idx = 0, slideshowList = [];
 
     function addImage(src) {
@@ -181,7 +175,8 @@
         const div = document.createElement('div'); div.className = 'image-wrapper';
         const el = document.createElement('img'); el.src = src; el.loading = 'lazy';
         el.onclick = () => { openFull(el); idx = slideshowList.indexOf(src); };
-        const btn = document.createElement('a'); btn.textContent = 'Save'; btn.href = '#'; btn.className = 'save-button';
+        const btn = document.createElement('a'); btn.textContent = 'Save';
+        btn.href = '#'; btn.className = 'save-button';
         btn.onclick = e => { e.preventDefault(); downloadWithExif(src); };
         div.append(el, btn);
         if (isPortrait) portraitGallery.append(div);
@@ -228,22 +223,20 @@
 
     fsNextBtn.onclick = () => {
       if (document.fullscreenElement && slideshowList.length) {
-        idx = (idx + 1) % slideshowList.length;
-        updateSlide();
+        idx = (idx + 1) % slideshowList.length; updateSlide();
       }
     };
 
     document.addEventListener('fullscreenchange', () => {
-      const display = document.fullscreenElement ? 'block' : 'none';
-      fsNextBtn.style.display = display;
-      swipeHint.style.display = display;
-      if (display === 'block') setTimeout(() => swipeHint.style.display = 'none', 4000);
+      const disp = document.fullscreenElement ? 'block' : 'none';
+      fsNextBtn.style.display = disp; swipeHint.style.display = disp;
+      if (disp === 'block') setTimeout(() => swipeHint.style.display = 'none', 4000);
     });
 
     document.addEventListener('keydown', e => {
       if (document.fullscreenElement && slideshowList.length) {
         if (e.key === 'ArrowRight') { idx = (idx + 1) % slideshowList.length; updateSlide(); }
-        if (e.key === 'ArrowLeft') { idx = (idx - 1 + slideshowList.length) % slideshowList.length; updateSlide(); }
+        if (e.key === 'ArrowLeft')  { idx = (idx - 1 + slideshowList.length) % slideshowList.length; updateSlide(); }
       }
     });
 
@@ -260,16 +253,8 @@
       }
     });
 
-    // Load videos only from videos/ folder via GitHub API
-    fetch('https://api.github.com/repos/ThortonEllmers/wedding-site/contents/videos?ref=main')
-      .then(res => res.json())
-      .then(files => {
-        files
-          .filter(f => f.type === 'file' && /\.(mp4|webm|ogg)$/i.test(f.name))
-          .forEach(f => addVideo(`videos/${f.name}`));
-      });
-
     imageList.forEach(addImage);
+    videoList.forEach(addVideo);
   </script>
 </body>
 </html>

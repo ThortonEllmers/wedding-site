@@ -7,7 +7,7 @@
       font-family: 'Segoe UI', sans-serif;
       text-align: center;
       padding: 2em 1em;
-      background: linear-gradient(to bottom right, #b3d4fc, #dbefff);
+      background: #f4f4f9;
       color: #333;
     }
     h1 {
@@ -27,12 +27,17 @@
       cursor: pointer;
       transition: transform 0.3s, opacity 0.5s;
     }
-    #slideshow img:hover { transform: scale(1.02); }.gallery {
+    #slideshow img:hover { transform: scale(1.02); }.gallery, .portrait-gallery {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 20px;
   padding: 0 1em;
   justify-items: center;
+}
+.gallery-section-title {
+  font-size: 1.5em;
+  margin: 2em 0 1em;
+  color: #2c3e50;
 }
 .image-wrapper {
   display: flex;
@@ -107,14 +112,16 @@
 <body>
   <h1>Sam and Annabelle’s Wedding Gallery</h1>  <div id="slideshow">
     <img id="slide" src="" alt="Slideshow">
-  </div>  <div class="gallery" id="gallery"></div>
-  <button id="fs-next-btn">Next</button>
+  </div>  <div class="gallery" id="gallery"></div>  <div class="gallery-section-title">Portrait Photos</div>
+  <div class="portrait-gallery" id="portrait-gallery"></div><button id="fs-next-btn">Next</button>
+
   <div id="swipe-hint" class="swipe-hint">
     <img src="https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/chevron-left.svg" alt="Swipe Left" />
     Swipe left/right
     <img src="https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/chevron-right.svg" alt="Swipe Right" />
   </div>  <script>
     const gallery = document.getElementById('gallery');
+    const portraitGallery = document.getElementById('portrait-gallery');
     const slide = document.getElementById('slide');
     const fsNextBtn = document.getElementById('fs-next-btn');
     const swipeHint = document.getElementById('swipe-hint');
@@ -148,9 +155,12 @@
         a.className = 'save-button';
 
         div.append(img, a);
-        gallery.append(div);
+        if (isPortrait) portraitGallery.append(div);
+        else {
+          gallery.append(div);
+          slideshowList.push(src);
+        }
 
-        if (!isPortrait) slideshowList.push(src);
         if (slideshowList.length === 1) startSlide();
       };
     }

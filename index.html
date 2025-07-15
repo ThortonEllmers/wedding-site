@@ -4,123 +4,194 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Segoe UI', sans-serif; text-align: center; padding: 2em 1em; transition: background 0.3s, color 0.3s; background: #f0f0f0; color: #333; }
-    body.dark { background: #1e1e1e; color: #eee; }h1 { margin-bottom: 1em; }
-#dark-toggle {
-  margin-bottom: 1.5em; padding: .6em 1.2em; font-size: 1em;
-  background: #444; color: #fff; border: none; border-radius: 6px; cursor: pointer;
+    body.dark { background: #1e1e1e; color: #eee; }
+    h1 { margin-bottom: 1em; }
+    #dark-toggle, #toggle-strips {
+      margin: 0.5em; padding: .6em 1.2em; font-size: 1em;
+      background: #444; color: #fff; border: none; border-radius: 6px; cursor: pointer;
+    }
+    #dark-toggle:hover, #toggle-strips:hover { background: #666; }#slideshow img {
+  width: 90%; max-width: 900px; border: 6px solid #3498db;
+  border-radius: 12px; margin-bottom: 2em; box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+  cursor: pointer; transition: transform 0.3s;
 }
-#dark-toggle:hover { background: #666; }#slideshow img { width: 90%; max-width: 900px; border: 6px solid #3498db; border-radius: 12px; margin-bottom: 2em; box-shadow: 0 10px 20px rgba(0,0,0,0.15); cursor: pointer; transition: transform 0.3s; } #slideshow img:hover { transform: scale(1.02); }
+#slideshow img:hover { transform: scale(1.02); }
 
-.gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 20px; padding: 0 1em; justify-items: center; } .image-wrapper { display: flex; flex-direction: column; align-items: center; width: 100%; } .image-wrapper img { width: 100%; max-width: 180px; height: auto; object-fit: contain; border: 3px solid #bdc3c7; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: pointer; transition: border-color 0.2s, transform 0.2s; } .image-wrapper img:hover { border-color: #3498db; transform: scale(1.05); }
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 20px;
+  padding: 0 1em;
+  justify-items: center;
+}
+.image-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+.image-wrapper img {
+  width: 100%;
+  max-width: 180px;
+  height: auto;
+  object-fit: contain;
+  border: 3px solid #bdc3c7;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.image-wrapper img:hover { border-color: #3498db; transform: scale(1.05); }
 
-.save-button { margin-top: .5em; padding: .4em .8em; font-size: .9em; background: #3498db; color: #fff; border-radius: 6px; text-decoration: none; width: 100%; text-align: center; } .save-button:hover { background: #2980b9; }
+.save-button {
+  margin-top: .5em; padding: .4em .8em; font-size: .9em;
+  background: #3498db; color: #fff; border-radius: 6px;
+  text-decoration: none; width: 100%; text-align: center;
+}
+.save-button:hover { background: #2980b9; }
 
-body.dark .save-button { background: #1abc9c; } body.dark .save-button:hover { background: #16a085; }
+body.dark .save-button { background: #1abc9c; }
+body.dark .save-button:hover { background: #16a085; }
 
-#fs-next-btn { display: none; position: fixed; bottom: 20px; right: 20px; padding: 10px 16px; font-size: 16px; background: #3498db; color: #fff; border: none; border-radius: 8px; z-index: 9999; }
+#fs-next-btn {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px 16px;
+  font-size: 16px;
+  background: #3498db;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  z-index: 9999;
+}
 
-@media(max-width: 768px) { .image-wrapper { max-width: 45%; } } @media(max-width: 480px) { .image-wrapper { max-width: 90%; } }
+#strip-gallery-section { display: block; margin-top: 3em; }
+
+@media(max-width: 768px) { .image-wrapper { max-width: 45%; } }
+@media(max-width: 480px) { .image-wrapper { max-width: 90%; } }
 
   </style>
 </head>
 <body>
   <h1>Sam and Annabelle’s Wedding Gallery</h1>
-  <button id="dark-toggle">Toggle Dark Mode</button>  <div id="slideshow">
+  <button id="dark-toggle">Toggle Dark Mode</button>
+  <button id="toggle-strips">Hide Photo Strips</button>  <div id="slideshow">
     <img id="slide" src="" alt="Slideshow">
-  </div>  <div class="gallery" id="gallery"></div>
-  <button id="fs-next-btn">Next</button>  <script>
+  </div>  <div class="gallery" id="gallery"></div>  <div id="strip-gallery-section">
+    <h2>Photo Strips</h2>
+    <div class="gallery" id="strip-gallery"></div>
+  </div><button id="fs-next-btn">Next</button>
+
+  <script>
     const gallery = document.getElementById('gallery');
+    const stripGallery = document.getElementById('strip-gallery');
+    const stripSection = document.getElementById('strip-gallery-section');
     const slide = document.getElementById('slide');
     const toggle = document.getElementById('dark-toggle');
-    const fsNextBtn = document.getElementById('fs-next-btn');const imageList = [];
-for (let i = 1; i <= 500; i++) {
-  imageList.push(`images/HotShots${i}.jpg`);
-}
-const maxImages = 500;
-for (let i = 1; i <= maxImages; i++) {
-  imageList.push(`images/HotShots${i}.jpg`);
-}
+    const toggleStrips = document.getElementById('toggle-strips');
+    const fsNextBtn = document.getElementById('fs-next-btn');
 
-let idx = 0;
-let slideshowList = [];
+    const imageList = [];
+    for (let i = 1; i <= 500; i++) {
+      imageList.push(`images/HotShots${i}.jpg`);
+    }
 
-function addGallery(src) {
-  const preloadImg = new Image();
-  preloadImg.src = src;
-  preloadImg.onload = () => {
-    const isPortrait = preloadImg.naturalHeight > preloadImg.naturalWidth * 1.3;
+    let idx = 0;
+    let slideshowList = [];
 
-    const div = document.createElement('div');
-    div.className = 'image-wrapper';
+    function addGallery(src) {
+      const preloadImg = new Image();
+      preloadImg.src = src;
+      preloadImg.onload = () => {
+        const isPortrait = preloadImg.naturalHeight > preloadImg.naturalWidth * 1.3;
 
-    const img = document.createElement('img');
-    img.src = src;
-    img.onclick = () => {
-      openFull(img);
-      idx = slideshowList.indexOf(src);
+        const div = document.createElement('div');
+        div.className = 'image-wrapper';
+
+        const img = document.createElement('img');
+        img.src = src;
+        img.onclick = () => {
+          openFull(img);
+          if (!isPortrait) idx = slideshowList.indexOf(src);
+        };
+
+        const a = document.createElement('a');
+        a.textContent = 'Save';
+        a.href = src;
+        a.download = '';
+        a.className = 'save-button';
+
+        div.append(img, a);
+
+        if (isPortrait) {
+          stripGallery.append(div);
+        } else {
+          gallery.append(div);
+          slideshowList.push(src);
+        }
+
+        if (slideshowList.length === 1) startSlide();
+      };
+    }
+
+    function startSlide() {
+      slide.src = slideshowList[0];
+      slide.onclick = () => openFull(slide);
+      setInterval(() => {
+        idx = (idx + 1) % slideshowList.length;
+        slide.src = slideshowList[idx];
+      }, 3000);
+    }
+
+    function openFull(img) {
+      if (img.requestFullscreen) img.requestFullscreen();
+      else if (img.webkitRequestFullscreen) img.webkitRequestFullscreen();
+      else if (img.msRequestFullscreen) img.msRequestFullscreen();
+    }
+
+    document.addEventListener('keydown', e => {
+      if (document.fullscreenElement && slideshowList.length > 0) {
+        if (e.key === 'ArrowRight') {
+          idx = (idx + 1) % slideshowList.length;
+          updateSlide();
+        }
+        if (e.key === 'ArrowLeft') {
+          idx = (idx - 1 + slideshowList.length) % slideshowList.length;
+          updateSlide();
+        }
+      }
+    });
+
+    toggle.onclick = () => document.body.classList.toggle('dark');
+
+    toggleStrips.onclick = () => {
+      if (stripSection.style.display === 'none') {
+        stripSection.style.display = 'block';
+        toggleStrips.textContent = 'Hide Photo Strips';
+      } else {
+        stripSection.style.display = 'none';
+        toggleStrips.textContent = 'Show Photo Strips';
+      }
     };
 
-    const a = document.createElement('a');
-    a.textContent = 'Save';
-    a.href = src;
-    a.download = '';
-    a.className = 'save-button';
+    fsNextBtn.onclick = () => {
+      if (document.fullscreenElement && slideshowList.length > 0) {
+        idx = (idx + 1) % slideshowList.length;
+        updateSlide();
+      }
+    };
 
-    div.append(img, a);
-    gallery.append(div);
+    document.addEventListener('fullscreenchange', () => {
+      fsNextBtn.style.display = document.fullscreenElement ? 'block' : 'none';
+    });
 
-    if (!isPortrait) slideshowList.push(src);
-    if (slideshowList.length === 1) startSlide();
-  };
-}
-
-function startSlide() {
-  slide.src = slideshowList[0];
-  slide.onclick = () => openFull(slide);
-  setInterval(() => {
-    idx = (idx + 1) % slideshowList.length;
-    slide.src = slideshowList[idx];
-  }, 3000);
-}
-
-function openFull(img) {
-  if (img.requestFullscreen) img.requestFullscreen();
-  else if (img.webkitRequestFullscreen) img.webkitRequestFullscreen();
-  else if (img.msRequestFullscreen) img.msRequestFullscreen();
-}
-
-document.addEventListener('keydown', e => {
-  if (document.fullscreenElement && slideshowList.length > 0) {
-    if (e.key === 'ArrowRight') {
-      idx = (idx + 1) % slideshowList.length;
-      updateSlide();
+    function updateSlide() {
+      const fsImg = document.fullscreenElement;
+      if (fsImg && fsImg.tagName === 'IMG') fsImg.src = slideshowList[idx];
     }
-    if (e.key === 'ArrowLeft') {
-      idx = (idx - 1 + slideshowList.length) % slideshowList.length;
-      updateSlide();
-    }
-  }
-});
 
-function updateSlide() {
-  const fsImg = document.fullscreenElement;
-  if (fsImg && fsImg.tagName === 'IMG') fsImg.src = slideshowList[idx];
-}
-
-toggle.onclick = () => document.body.classList.toggle('dark');
-fsNextBtn.onclick = () => {
-  if (document.fullscreenElement && slideshowList.length > 0) {
-    idx = (idx + 1) % slideshowList.length;
-    updateSlide();
-  }
-};
-
-document.addEventListener('fullscreenchange', () => {
-  fsNextBtn.style.display = document.fullscreenElement ? 'block' : 'none';
-});
-
-imageList.forEach(addGallery);
-
-</script></body>
-
+    imageList.forEach(addGallery);
+  </script></body>
 </html>

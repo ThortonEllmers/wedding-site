@@ -39,6 +39,7 @@ async function loadImages() {
 
 function startSlideshow() {
   slide.src = imageList[0];
+  slide.addEventListener('click', () => openFullscreen(slide));
   setInterval(() => {
     currentIndex = (currentIndex + 1) % imageList.length;
     slide.src = imageList[currentIndex];
@@ -51,7 +52,10 @@ function addImageToGallery(src) {
 
   const img = document.createElement('img');
   img.src = src;
-  img.addEventListener('click', () => openFullscreen(img));
+  img.addEventListener('click', () => {
+    openFullscreen(img);
+    currentIndex = imageList.indexOf(src);
+  });
 
   const btn = document.createElement('a');
   btn.textContent = 'Save';
@@ -73,5 +77,29 @@ function openFullscreen(img) {
     img.msRequestFullscreen();
   }
 }
+
+// Navigate images while in fullscreen
+document.addEventListener('keydown', (e) => {
+  if (document.fullscreenElement && imageList.length > 0) {
+    if (e.key === 'ArrowRight') {
+      currentIndex = (currentIndex + 1) % imageList.length;
+      updateFullscreenImage();
+    } else if (e.key === 'ArrowLeft') {
+      currentIndex = (currentIndex - 1 + imageList.length) % imageList.length;
+      updateFullscreenImage();
+    }
+  }
+});
+
+function updateFullscreenImage() {
+  if (document.fullscreenElement && document.fullscreenElement.tagName === 'IMG') {
+    document.fullscreenElement.src = imageList[currentIndex];
+  }
+}
+
+// Toggle dark mode
+document.getElementById('dark-toggle').addEventListener('click', () => {
+  document.body.classList.toggle('dark');
+});
 
 loadImages();

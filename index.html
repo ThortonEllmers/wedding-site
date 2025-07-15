@@ -1,162 +1,125 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+<!DOCTYPE html><html lang="en"><head>
   <meta charset="UTF-8">
   <title>Sam and Annabelle’s Wedding Gallery</title>
   <style>
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Segoe UI', sans-serif;
       text-align: center;
       padding: 2em 1em;
-      background: linear-gradient(135deg, #3a588c, #5b7bbd);
-      color: #fff;
+      background: linear-gradient(to bottom right, #b3d4fc, #dbefff);
+      color: #333;
     }
-
     h1 {
       margin-bottom: 1em;
-      font-size: 2em;
-      font-weight: bold;
+      font-size: 2.5em;
+      font-weight: 700;
+      color: #1a3e5f;
+      text-shadow: 1px 1px 2px rgba(255,255,255,0.6);
     }
-
     #slideshow img {
       width: 90%;
       max-width: 900px;
       border: 6px solid #3498db;
       border-radius: 12px;
       margin-bottom: 2em;
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.15);
       cursor: pointer;
-      transition: transform 0.3s;
+      transition: transform 0.3s, opacity 0.5s;
     }
+    #slideshow img:hover { transform: scale(1.02); }.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 20px;
+  padding: 0 1em;
+  justify-items: center;
+}
+.image-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+.image-wrapper img {
+  width: 100%;
+  max-width: 180px;
+  height: auto;
+  object-fit: contain;
+  border: 3px solid #bdc3c7;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.image-wrapper img:hover { border-color: #3498db; transform: scale(1.05); }
 
-    #slideshow img:hover {
-      transform: scale(1.02);
-    }
+.save-button {
+  margin-top: .5em; padding: .4em .8em; font-size: .9em;
+  background: #3498db; color: #fff; border-radius: 6px;
+  text-decoration: none; width: 100%; text-align: center;
+}
+.save-button:hover { background: #2980b9; }
 
-    .gallery-section {
-      margin-top: 2em;
-    }
+#fs-next-btn {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px 16px;
+  font-size: 16px;
+  background: #3498db;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  z-index: 9999;
+}
 
-    .section-title {
-      margin-bottom: 1em;
-      font-size: 1.5em;
-      border-bottom: 2px solid rgba(255, 255, 255, 0.3);
-      display: inline-block;
-      padding-bottom: 0.3em;
-    }
+.swipe-hint {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 14px;
+  color: #ffffff;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 10px 14px;
+  border-radius: 10px;
+  z-index: 9999;
+  display: none;
+  align-items: center;
+  gap: 6px;
+  animation: fadeIn 0.6s ease-in-out;
+}
+.swipe-hint img {
+  width: 20px;
+  height: 20px;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translate(-50%, 20px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
 
-    .gallery {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 20px;
-      padding: 0 1em;
-      justify-items: center;
-    }
+@media(max-width: 768px) { .image-wrapper { max-width: 45%; } }
+@media(max-width: 480px) { .image-wrapper { max-width: 90%; } }
 
-    .image-wrapper {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 100%;
-    }
-
-    .image-wrapper img {
-      width: 100%;
-      max-width: 180px;
-      height: auto;
-      object-fit: contain;
-      border: 3px solid #fff;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-      cursor: pointer;
-      transition: border-color 0.2s, transform 0.2s;
-    }
-
-    .image-wrapper img:hover {
-      border-color: #86c5ff;
-      transform: scale(1.05);
-    }
-
-    .save-button {
-      margin-top: .5em;
-      padding: .4em .8em;
-      font-size: .9em;
-      background: #ffffff;
-      color: #234;
-      border-radius: 6px;
-      text-decoration: none;
-      width: 100%;
-      text-align: center;
-      font-weight: bold;
-    }
-
-    .save-button:hover {
-      background: #cce6ff;
-    }
-
-    #fs-next-btn {
-      display: none;
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      padding: 10px 16px;
-      font-size: 16px;
-      background: #ffffff;
-      color: #234;
-      border: none;
-      border-radius: 8px;
-      z-index: 9999;
-      font-weight: bold;
-    }
-
-    @media(max-width: 768px) {
-      .image-wrapper {
-        max-width: 45%;
-      }
-    }
-
-    @media(max-width: 480px) {
-      .image-wrapper {
-        max-width: 90%;
-      }
-    }
   </style>
 </head>
 <body>
-  <h1>Sam and Annabelle’s Wedding Gallery</h1>
-
-  <div id="slideshow">
+  <h1>Sam and Annabelle’s Wedding Gallery</h1>  <div id="slideshow">
     <img id="slide" src="" alt="Slideshow">
-  </div>
-
-  <div class="gallery-section">
-    <div class="section-title">Gallery</div>
-    <div class="gallery" id="gallery"></div>
-  </div>
-
-  <div class="gallery-section">
-    <div class="section-title">Photo Strips</div>
-    <div class="gallery" id="portraitGallery"></div>
-  </div>
-
+  </div>  <div class="gallery" id="gallery"></div>
   <button id="fs-next-btn">Next</button>
-
-  <script>
+  <div id="swipe-hint" class="swipe-hint">
+    <img src="https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/chevron-left.svg" alt="Swipe Left" />
+    Swipe left/right
+    <img src="https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/chevron-right.svg" alt="Swipe Right" />
+  </div>  <script>
     const gallery = document.getElementById('gallery');
-    const portraitGallery = document.getElementById('portraitGallery');
     const slide = document.getElementById('slide');
     const fsNextBtn = document.getElementById('fs-next-btn');
+    const swipeHint = document.getElementById('swipe-hint');
 
-    const imageList = [];
-    for (let i = 1; i <= 500; i++) {
-      imageList.push(`images/HotShots${i}.jpg`);
-    }
+    const imageList = Array.from({length: 500}, (_, i) => `images/HotShots${i + 1}.jpg`);
 
     let idx = 0;
     let slideshowList = [];
@@ -172,6 +135,7 @@
 
         const img = document.createElement('img');
         img.src = src;
+        img.loading = 'lazy';
         img.onclick = () => {
           openFull(img);
           idx = slideshowList.indexOf(src);
@@ -184,7 +148,7 @@
         a.className = 'save-button';
 
         div.append(img, a);
-        (isPortrait ? portraitGallery : gallery).append(div);
+        gallery.append(div);
 
         if (!isPortrait) slideshowList.push(src);
         if (slideshowList.length === 1) startSlide();
@@ -196,7 +160,11 @@
       slide.onclick = () => openFull(slide);
       setInterval(() => {
         idx = (idx + 1) % slideshowList.length;
-        slide.src = slideshowList[idx];
+        slide.style.opacity = 0;
+        setTimeout(() => {
+          slide.src = slideshowList[idx];
+          slide.style.opacity = 1;
+        }, 300);
       }, 3000);
     }
 
@@ -205,6 +173,33 @@
       else if (img.webkitRequestFullscreen) img.webkitRequestFullscreen();
       else if (img.msRequestFullscreen) img.msRequestFullscreen();
     }
+
+    function updateSlide() {
+      const fsImg = document.fullscreenElement;
+      if (fsImg && fsImg.tagName === 'IMG') {
+        fsImg.style.opacity = 0;
+        setTimeout(() => {
+          fsImg.src = slideshowList[idx];
+          fsImg.style.opacity = 1;
+        }, 300);
+      }
+    }
+
+    fsNextBtn.onclick = () => {
+      if (document.fullscreenElement && slideshowList.length > 0) {
+        idx = (idx + 1) % slideshowList.length;
+        updateSlide();
+      }
+    };
+
+    document.addEventListener('fullscreenchange', () => {
+      const show = document.fullscreenElement ? 'block' : 'none';
+      fsNextBtn.style.display = show;
+      swipeHint.style.display = show;
+      if (show === 'block') {
+        setTimeout(() => { swipeHint.style.display = 'none'; }, 4000);
+      }
+    });
 
     document.addEventListener('keydown', e => {
       if (document.fullscreenElement && slideshowList.length > 0) {
@@ -219,23 +214,32 @@
       }
     });
 
-    function updateSlide() {
-      const fsImg = document.fullscreenElement;
-      if (fsImg && fsImg.tagName === 'IMG') fsImg.src = slideshowList[idx];
-    }
+    let touchStartX = 0;
+    let touchEndX = 0;
 
-    fsNextBtn.onclick = () => {
-      if (document.fullscreenElement && slideshowList.length > 0) {
-        idx = (idx + 1) % slideshowList.length;
-        updateSlide();
-      }
-    };
-
-    document.addEventListener('fullscreenchange', () => {
-      fsNextBtn.style.display = document.fullscreenElement ? 'block' : 'none';
+    document.addEventListener('touchstart', e => {
+      touchStartX = e.changedTouches[0].screenX;
     });
 
+    document.addEventListener('touchend', e => {
+      touchEndX = e.changedTouches[0].screenX;
+      handleSwipe();
+    });
+
+    function handleSwipe() {
+      if (!document.fullscreenElement || slideshowList.length === 0) return;
+
+      const diff = touchEndX - touchStartX;
+      if (Math.abs(diff) > 50) {
+        if (diff < 0) {
+          idx = (idx + 1) % slideshowList.length;
+        } else {
+          idx = (idx - 1 + slideshowList.length) % slideshowList.length;
+        }
+        updateSlide();
+      }
+    }
+
     imageList.forEach(addGallery);
-  </script>
-</body>
+  </script></body>
 </html>

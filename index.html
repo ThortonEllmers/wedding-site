@@ -89,7 +89,7 @@
 
     .swipe-hint {
       position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
-      display: none; align-items: center; gap: 8px;
+      display: false; align-items: center; gap: 8px;
       background: rgba(0,0,0,.6); color: #fff;
       font-size: 14px; padding: 8px 12px; border-radius: 8px;
       z-index: 9999; animation: fadeIn .6s ease-in-out;
@@ -104,7 +104,7 @@
   </style>
 </head>
 <body>
-  <h1>Sam and Annabelle’s\nWedding Gallery</h1>
+  <h1>Sam and Annabelle’s Wedding Gallery</h1>
 
   <div id="slideshow">
     <img id="slide" src="" alt="Slideshow">
@@ -184,6 +184,10 @@
       'https://drive.google.com/file/d/1K4jAhd5pNLvvCBZP7mfZho24SNS60o6A/preview',
       'https://drive.google.com/file/d/1K1YyUSyQtdyggsid2puE1rYzbjZ7xzdD/preview'
     ];
+    const videoDescriptions = [
+      'Bouquet Throw',
+      'Cake Cutting'
+    ];
 
     let idx = 0, slideshowList = [];
 
@@ -206,7 +210,7 @@
       };
     }
 
-    function addVideo(src) {
+    function addVideo(src, i) {
       const div = document.createElement('div'); div.className = 'video-wrapper';
       let vid;
       if (/drive\.google\.com/.test(src)) {
@@ -220,16 +224,17 @@
       }
       vid.onclick = () => openFull(vid);
 
-      // placeholder description
+      // actual description
       const desc = document.createElement('p');
-      desc.textContent = 'Placeholder description of this video content.';
-      desc.style.fontSize = '1em'; 
+      desc.textContent = videoDescriptions[i];
+      desc.style.fontSize = '1em';
       desc.style.color = '#fff';
       desc.style.marginTop = '0.5em';
 
       const link = document.createElement('a');
       link.textContent = 'Save'; link.href = src; link.download = '';
       link.className = 'save-button';
+
       div.append(vid, desc, link);
       videoGallery.append(div);
     }

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Sam and Annabelle’s\nWedding Gallery</title>
+  <title>Sam and Annabelle’s Wedding Gallery</title>
   <!-- Script font for title & section headings -->
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
   <!-- Piexifjs for writing EXIF metadata -->
@@ -48,17 +48,14 @@
       display: flex; flex-direction: column; align-items: center;
       width: 100%;
     }
-
     /* Portrait images keep natural aspect ratio */
     .image-wrapper img {
       width: 100%; max-width: 180px;
-      height: auto;
-      object-fit: contain;
+      height: auto; object-fit: contain;
       border: 3px solid #fff; border-radius: 10px;
       box-shadow: 0 4px 10px rgba(0,0,0,.1);
       cursor: pointer; transition: border-color .2s, transform .2s;
     }
-
     /* Videos & embeds are 16:9 */
     .video-wrapper video,
     .video-wrapper iframe {
@@ -69,13 +66,11 @@
       cursor: pointer; transition: border-color .2s, transform .2s;
       object-fit: cover;
     }
-
     .image-wrapper img:hover,
     .video-wrapper video:hover,
     .video-wrapper iframe:hover {
       border-color: #e0e0e0; transform: scale(1.05);
     }
-
     .save-button {
       margin-top: .5em; padding: .4em .8em; font-size: .9em;
       background: #fff; color: #456B8B; border-radius: 6px;
@@ -109,7 +104,7 @@
   </style>
 </head>
 <body>
-  <h1>Sam and Annabelle’s Wedding Gallery</h1>
+  <h1>Sam and Annabelle’s\nWedding Gallery</h1>
 
   <div id="slideshow">
     <img id="slide" src="" alt="Slideshow">
@@ -214,7 +209,7 @@
     function addVideo(src) {
       const div = document.createElement('div'); div.className = 'video-wrapper';
       let vid;
-      if (/drive\\.google\\.com/.test(src)) {
+      if (/drive\.google\.com/.test(src)) {
         vid = document.createElement('iframe');
         vid.src = src;
         vid.allowFullscreen = true;
@@ -224,10 +219,18 @@
         vid.controls = true;
       }
       vid.onclick = () => openFull(vid);
+
+      // placeholder description
+      const desc = document.createElement('p');
+      desc.textContent = 'Placeholder description of this video content.';
+      desc.style.fontSize = '1em'; 
+      desc.style.color = '#fff';
+      desc.style.marginTop = '0.5em';
+
       const link = document.createElement('a');
-      link.textContent = 'Download'; link.href = src; link.download = '';
+      link.textContent = 'Save'; link.href = src; link.download = '';
       link.className = 'save-button';
-      div.append(vid, link);
+      div.append(vid, desc, link);
       videoGallery.append(div);
     }
 

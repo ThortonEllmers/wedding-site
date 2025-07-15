@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Sam and Annabelle’s Wedding Gallery</title>
-  <!-- Script font for title -->
+  <!-- Script font for title & section headings -->
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
   <!-- Piexifjs for writing EXIF metadata -->
   <script src="https://cdn.jsdelivr.net/npm/piexifjs@1.0.4/piexif.min.js"></script>
@@ -23,6 +23,7 @@
       text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
     }
     .gallery-section-title {
+      font-family: 'Great Vibes', cursive;
       font-size: 1.5em;
       margin: 2em 0 1em;
       display: inline-block;
@@ -38,10 +39,9 @@
       transition: transform .3s, opacity .5s;
     }
     #slideshow img:hover { transform: scale(1.02); }
-
     .gallery, .portrait-gallery {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px,1fr));
+      grid-template-columns: repeat(auto-fit,minmax(160px,1fr));
       gap: 20px;
       padding: 0 1em;
       justify-items: center;
@@ -54,41 +54,39 @@
       width: 100%;
     }
     .image-wrapper img {
-      width: 100%; max-width: 180px; height: auto; object-fit: contain;
-      border: 3px solid #fff; border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,.1);
-      cursor: pointer; transition: border-color .2s, transform .2s;
+      width: 100%; max-width:180px; height:auto; object-fit:contain;
+      border:3px solid #fff; border-radius:10px;
+      box-shadow:0 4px 10px rgba(0,0,0,.1);
+      cursor:pointer; transition: border-color .2s, transform .2s;
     }
     .image-wrapper img:hover {
       border-color: #e0e0e0; transform: scale(1.05);
     }
     .save-button {
       margin-top: .5em; padding: .4em .8em; font-size: .9em;
-      background: #fff; color: #456B8B; border-radius: 6px;
-      text-decoration: none; width: 100%; text-align: center;
-      font-weight: bold; transition: background .2s;
+      background: #fff; color: #456B8B; border-radius:6px;
+      text-decoration:none; width:100%; text-align:center;
+      font-weight:bold; transition: background .2s;
     }
-    .save-button:hover { background: #f0f0f0; }
-
+    .save-button:hover { background:#f0f0f0; }
     #fs-next-btn {
-      display: none; position: fixed; bottom: 20px; right: 20px;
-      padding: 10px 16px; font-size: 16px; background: #fff;
-      color: #456B8B; border: none; border-radius: 8px; z-index:9999;
-      font-weight: bold; transition: background .2s;
+      display:none; position:fixed; bottom:20px; right:20px;
+      padding:10px 16px; font-size:16px; background:#fff;
+      color:#456B8B; border:none; border-radius:8px; z-index:9999;
+      font-weight:bold; transition: background .2s;
     }
-    #fs-next-btn:hover { background: #f0f0f0; }
-
+    #fs-next-btn:hover { background:#f0f0f0; }
     .swipe-hint {
-      position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
-      display: none; align-items: center; gap: 8px;
-      background: rgba(0,0,0,.6); color: #fff;
-      font-size: 14px; padding: 8px 12px; border-radius: 8px;
-      z-index: 9999; animation: fadeIn .6s ease-in-out;
+      position:fixed; bottom:80px; left:50%; transform:translateX(-50%);
+      display:none; align-items:center; gap:8px;
+      background:rgba(0,0,0,.6); color:#fff;
+      font-size:14px; padding:8px 12px; border-radius:8px;
+      z-index:9999; animation: fadeIn .6s ease-in-out;
     }
-    .swipe-hint img { width: 20px; height: 20px; }
+    .swipe-hint img { width:20px; height:20px; }
     @keyframes fadeIn {
-      from { opacity: 0; transform: translate(-50%, 20px); }
-      to   { opacity: 1; transform: translate(-50%, 0); }
+      from { opacity:0; transform: translate(-50%,20px); }
+      to   { opacity:1; transform: translate(-50%,0); }
     }
     @media(max-width:768px){ .image-wrapper{ max-width:45%; } }
     @media(max-width:480px){ .image-wrapper{ max-width:90%; } }
@@ -115,7 +113,7 @@
   </div>
 
   <script>
-    // Forced GPS coordinates for 638 Harewood Road (Harewood suburb center)
+    // Forced GPS coordinates for 638 Harewood Road (Harewood suburb)
     const forcedGPS = { lat: -43.47979, lon: 172.56241 };
 
     function toDMSRational(dec) {
@@ -133,9 +131,9 @@
         const dataURL = reader.result;
         const zeroth = {}, exif = {}, gps = {};
         gps[piexif.GPSIFD.GPSVersionID]   = [2,3,0,0];
-        gps[piexif.GPSIFD.GPSLatitudeRef]  = forcedGPS.lat < 0 ? 'S' : 'N';
+        gps[piexif.GPSIFD.GPSLatitudeRef]  = forcedGPS.lat<0?'S':'N';
         gps[piexif.GPSIFD.GPSLatitude]     = toDMSRational(forcedGPS.lat);
-        gps[piexif.GPSIFD.GPSLongitudeRef] = forcedGPS.lon < 0 ? 'W' : 'E';
+        gps[piexif.GPSIFD.GPSLongitudeRef] = forcedGPS.lon<0?'W':'E';
         gps[piexif.GPSIFD.GPSLongitude]    = toDMSRational(forcedGPS.lon);
         const exifObj = {'0th':zeroth,Exif:exif,GPS:gps};
         const exifBytes = piexif.dump(exifObj);
@@ -143,20 +141,19 @@
         const parts = newDataURL.split(',');
         const mime = parts[0].match(/:(.*?);/)[1];
         const bstr = atob(parts[1]);
-        let n = bstr.length, u8arr = new Uint8Array(n);
-        while(n--) u8arr[n] = bstr.charCodeAt(n);
-        const newBlob = new Blob([u8arr], { type: mime });
-        const newURL  = URL.createObjectURL(newBlob);
+        let n=bstr.length, u8arr=new Uint8Array(n);
+        while(n--) u8arr[n]=bstr.charCodeAt(n);
+        const newBlob=new Blob([u8arr],{type:mime});
+        const newURL=URL.createObjectURL(newBlob);
 
-        // random 3–5 digit ID
         const length = Math.floor(Math.random()*3)+3;
-        const min = 10**(length-1), max = 10**length-1;
+        const min = 10**(length-1), max=10**length-1;
         const id = Math.floor(Math.random()*(max-min+1))+min;
         const ext = src.split('.').pop();
-        const filename = `samandannabelle.live-${id}.${ext}`;
+        const filename=`samandannabelle.live-${id}.${ext}`;
 
-        const link = document.createElement('a');
-        link.href = newURL; link.download = filename;
+        const link=document.createElement('a');
+        link.href=newURL; link.download=filename;
         document.body.appendChild(link);
         link.click(); document.body.removeChild(link);
       };
@@ -168,92 +165,77 @@
     const slide = document.getElementById('slide');
     const fsNextBtn = document.getElementById('fs-next-btn');
     const swipeHint = document.getElementById('swipe-hint');
-    const imageList = Array.from({length:500}, (_,i) => `images/HotShots${i+1}.jpg`);
+    const imageList = Array.from({length:500},(_,i)=>`images/HotShots${i+1}.jpg`);
     let idx=0, slideshowList=[];
 
-    function addGallery(src) {
-      const img = new Image();
-      img.src = src;
-      img.onload = () => {
-        const isPortrait = img.naturalHeight > img.naturalWidth * 1.3;
-        const div = document.createElement('div');
-        div.className = 'image-wrapper';
-        const displayed = document.createElement('img');
-        displayed.src = src;
-        displayed.loading = 'lazy';
-        displayed.onclick = () => { openFull(displayed); idx = slideshowList.indexOf(src); };
-        const a = document.createElement('a');
-        a.textContent = 'Save';
-        a.href = '#';
-        a.className = 'save-button';
-        a.onclick = e => { e.preventDefault(); downloadWithExif(src); };
-        div.append(displayed, a);
-        if (isPortrait) portraitGallery.append(div);
+    function addGallery(src){
+      const img=new Image(); img.src=src;
+      img.onload=()=>{
+        const isPortrait = img.naturalHeight>img.naturalWidth*1.3;
+        const div=document.createElement('div'); div.className='image-wrapper';
+        const displayed=document.createElement('img');
+        displayed.src=src; displayed.loading='lazy';
+        displayed.onclick=()=>{openFull(displayed); idx=slideshowList.indexOf(src);};
+        const a=document.createElement('a'); a.textContent='Save';
+        a.href='#'; a.className='save-button';
+        a.onclick=e=>{e.preventDefault(); downloadWithExif(src);};
+        div.append(displayed,a);
+        if(isPortrait) portraitGallery.append(div);
         else { gallery.append(div); slideshowList.push(src); }
-        if (slideshowList.length===1) startSlide();
+        if(slideshowList.length===1)startSlide();
       };
     }
 
-    function startSlide() {
-      slide.src = slideshowList[0];
-      slide.onclick = () => openFull(slide);
-      setInterval(() => {
-        idx = (idx+1) % slideshowList.length;
-        slide.style.opacity = 0;
-        setTimeout(() => { slide.src = slideshowList[idx]; slide.style.opacity = 1; }, 300);
-      }, 3000);
+    function startSlide(){
+      slide.src=slideshowList[0]; slide.onclick=()=>openFull(slide);
+      setInterval(()=>{
+        idx=(idx+1)%slideshowList.length;
+        slide.style.opacity=0;
+        setTimeout(()=>{ slide.src=slideshowList[idx]; slide.style.opacity=1; },300);
+      },3000);
     }
-
-    function openFull(img) {
-      if (img.requestFullscreen) img.requestFullscreen();
-      else if (img.webkitRequestFullscreen) img.webkitRequestFullscreen();
-      else if (img.msRequestFullscreen) img.msRequestFullscreen();
+    function openFull(img){
+      if(img.requestFullscreen) img.requestFullscreen();
+      else if(img.webkitRequestFullscreen) img.webkitRequestFullscreen();
+      else if(img.msRequestFullscreen) img.msRequestFullscreen();
     }
-
-    function updateSlide() {
-      const fsImg = document.fullscreenElement;
-      if (fsImg && fsImg.tagName==='IMG') {
-        fsImg.style.opacity = 0;
-        setTimeout(() => { fsImg.src = slideshowList[idx]; fsImg.style.opacity = 1; }, 300);
+    function updateSlide(){
+      const fsImg=document.fullscreenElement;
+      if(fsImg&&fsImg.tagName==='IMG'){
+        fsImg.style.opacity=0;
+        setTimeout(()=>{ fsImg.src=slideshowList[idx]; fsImg.style.opacity=1; },300);
       }
     }
-
-    fsNextBtn.onclick = () => {
-      if (document.fullscreenElement && slideshowList.length) {
-        idx = (idx+1) % slideshowList.length;
-        updateSlide();
+    fsNextBtn.onclick=()=>{
+      if(document.fullscreenElement && slideshowList.length){
+        idx=(idx+1)%slideshowList.length; updateSlide();
       }
     };
-
-    document.addEventListener('fullscreenchange', () => {
-      const show = document.fullscreenElement ? 'block' : 'none';
-      fsNextBtn.style.display = show;
-      swipeHint.style.display = show;
-      if (show==='block') setTimeout(() => swipeHint.style.display='none',4000);
+    document.addEventListener('fullscreenchange',()=>{
+      const show=document.fullscreenElement?'block':'none';
+      fsNextBtn.style.display=show; swipeHint.style.display=show;
+      if(show==='block') setTimeout(()=>swipeHint.style.display='none',4000);
     });
-
-    document.addEventListener('keydown', e => {
-      if (document.fullscreenElement && slideshowList.length) {
-        if (e.key==='ArrowRight') { idx=(idx+1)%slideshowList.length; updateSlide(); }
-        if (e.key==='ArrowLeft')  { idx=(idx-1+slideshowList.length)%slideshowList.length; updateSlide(); }
+    document.addEventListener('keydown',e=>{
+      if(document.fullscreenElement && slideshowList.length){
+        if(e.key==='ArrowRight'){ idx=(idx+1)%slideshowList.length; updateSlide(); }
+        if(e.key==='ArrowLeft'){ idx=(idx-1+slideshowList.length)%slideshowList.length; updateSlide(); }
       }
     });
-
     let touchStartX=0, touchEndX=0;
-    document.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; });
-    document.addEventListener('touchend', e => {
-      touchEndX = e.changedTouches[0].screenX;
-      if (document.fullscreenElement && slideshowList.length) {
-        const diff = touchEndX - touchStartX;
-        if (Math.abs(diff)>50) {
-          idx = diff<0 
-            ? (idx+1)%slideshowList.length 
+    document.addEventListener('touchstart',e=>{ touchStartX=e.changedTouches[0].screenX; });
+    document.addEventListener('touchend',e=>{
+      touchEndX=e.changedTouches[0].screenX;
+      if(document.fullscreenElement && slideshowList.length){
+        const diff=touchEndX-touchStartX;
+        if(Math.abs(diff)>50){
+          idx = diff<0
+            ? (idx+1)%slideshowList.length
             : (idx-1+slideshowList.length)%slideshowList.length;
           updateSlide();
         }
       }
     });
-
     imageList.forEach(addGallery);
   </script>
 </body>

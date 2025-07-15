@@ -2,11 +2,150 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Sam and Annabelles</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>Sam and Annabelle's Wedding Gallery</title>
+  <style>
+    /* === STYLES === */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      text-align: center;
+      background: linear-gradient(to bottom right, #fdfbfb, #ebedee);
+      padding: 2em 1em;
+      color: #333;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    body.dark {
+      background: linear-gradient(to bottom right, #1e1e1e, #2c2c2c);
+      color: #eee;
+    }
+
+    h1 {
+      font-size: 2em;
+      margin-bottom: 1em;
+    }
+
+    #dark-toggle {
+      margin-bottom: 2em;
+      padding: 10px 20px;
+      font-size: 14px;
+      background: #444;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    #dark-toggle:hover {
+      background: #666;
+    }
+
+    #slideshow img {
+      width: 90%;
+      max-width: 900px;
+      height: auto;
+      border: 6px solid #3498db;
+      border-radius: 12px;
+      margin-bottom: 40px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+      transition: transform 0.3s ease;
+    }
+
+    #slideshow img:hover {
+      transform: scale(1.02);
+    }
+
+    .gallery {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 24px;
+      padding: 0 1em;
+    }
+
+    .image-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 180px;
+      width: 100%;
+    }
+
+    .image-wrapper img {
+      width: 100%;
+      height: auto;
+      border: 3px solid #bdc3c7;
+      border-radius: 10px;
+      transition: all 0.2s ease-in-out;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      cursor: pointer;
+    }
+
+    .image-wrapper img:hover {
+      border-color: #3498db;
+      transform: scale(1.05);
+    }
+
+    .save-button {
+      margin-top: 10px;
+      font-size: 14px;
+      background-color: #3498db;
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+      width: 100%;
+      text-align: center;
+    }
+
+    .save-button:hover {
+      background-color: #2980b9;
+    }
+
+    body.dark .save-button {
+      background-color: #1abc9c;
+    }
+
+    body.dark .save-button:hover {
+      background-color: #16a085;
+    }
+
+    body.dark #dark-toggle {
+      background: #ddd;
+      color: #000;
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 1.6em;
+      }
+
+      .image-wrapper {
+        max-width: 45%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .image-wrapper {
+        max-width: 90%;
+      }
+
+      .save-button {
+        font-size: 13px;
+        padding: 5px 10px;
+      }
+    }
+  </style>
 </head>
 <body>
   <h1>Sam and Annabelle's Wedding Gallery</h1>
+  <button id="dark-toggle">Toggle Dark Mode</button>
 
   <div id="slideshow">
     <img id="slide" src="" alt="Slideshow" />
@@ -14,6 +153,110 @@
 
   <div class="gallery" id="gallery"></div>
 
-  <script src="script.js"></script>
+  <script>
+    const gallery = document.getElementById('gallery');
+    const slide = document.getElementById('slide');
+    const imageList = [];
+    const maxPhotos = 999;
+    const extensions = ['jpg', 'jpeg', 'png', 'webp'];
+    let currentIndex = 0;
+
+    function checkImage(url) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.src = url;
+        img.onload = () => resolve(url);
+        img.onerror = () => resolve(null);
+      });
+    }
+
+    function padNumber(num, length) {
+      return num.toString().padStart(length, '0');
+    }
+
+    async function loadImages() {
+      for (let i = 1; i <= maxPhotos; i++) {
+        const baseName = `HotShots${padNumber(i, 3)}`;
+        for (const ext of extensions) {
+          const url = `images/${baseName}.${ext}`;
+          const result = await checkImage(url);
+          if (result) {
+            imageList.push(result);
+            addImageToGallery(result);
+            break;
+          }
+        }
+      }
+
+      if (imageList.length > 0) {
+        startSlideshow();
+      }
+    }
+
+    function startSlideshow() {
+      slide.src = imageList[0];
+      slide.addEventListener('click', () => openFullscreen(slide));
+      setInterval(() => {
+        currentIndex = (currentIndex + 1) % imageList.length;
+        slide.src = imageList[currentIndex];
+      }, 3000);
+    }
+
+    function addImageToGallery(src) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'image-wrapper';
+
+      const img = document.createElement('img');
+      img.src = src;
+      img.addEventListener('click', () => {
+        openFullscreen(img);
+        currentIndex = imageList.indexOf(src);
+      });
+
+      const btn = document.createElement('a');
+      btn.textContent = 'Save';
+      btn.href = src;
+      btn.download = '';
+      btn.className = 'save-button';
+
+      wrapper.appendChild(img);
+      wrapper.appendChild(btn);
+      gallery.appendChild(wrapper);
+    }
+
+    function openFullscreen(img) {
+      if (img.requestFullscreen) {
+        img.requestFullscreen();
+      } else if (img.webkitRequestFullscreen) {
+        img.webkitRequestFullscreen();
+      } else if (img.msRequestFullscreen) {
+        img.msRequestFullscreen();
+      }
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (document.fullscreenElement && imageList.length > 0) {
+        if (e.key === 'ArrowRight') {
+          currentIndex = (currentIndex + 1) % imageList.length;
+          updateFullscreenImage();
+        } else if (e.key === 'ArrowLeft') {
+          currentIndex = (currentIndex - 1 + imageList.length) % imageList.length;
+          updateFullscreenImage();
+        }
+      }
+    });
+
+    function updateFullscreenImage() {
+      if (document.fullscreenElement && document.fullscreenElement.tagName === 'IMG') {
+        document.fullscreenElement.src = imageList[currentIndex];
+      }
+    }
+
+    document.getElementById('dark-toggle').addEventListener('click', () => {
+      document.body.classList.toggle('dark');
+    });
+
+    loadImages();
+  </script>
 </body>
 </html>

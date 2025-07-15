@@ -1,154 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Sam and Annabelle's Wedding Gallery</title>
+  <meta charset="UTF-8">
+  <title>Sam and Annabelle’s Wedding Gallery</title>
   <style>
-    /* === STYLES === */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    /* Reset & Font */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', sans-serif; text-align: center; padding: 2em 1em; transition: background 0.3s, color 0.3s; }
 
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      text-align: center;
-      background: linear-gradient(to bottom right, #fdfbfb, #ebedee);
-      padding: 2em 1em;
-      color: #333;
-      transition: background 0.3s ease, color 0.3s ease;
-    }
+    /* Light / Dark mode */
+    body { background: #f0f0f0; color: #333; }
+    body.dark { background: #1e1e1e; color: #eee; }
 
-    body.dark {
-      background: linear-gradient(to bottom right, #1e1e1e, #2c2c2c);
-      color: #eee;
+    h1 { margin-bottom: 1em; }
+    #dark-toggle { margin-bottom: 1.5em; padding: .6em 1.2em; font-size: 1em;
+      background: #444; color: #fff; border: none; border-radius: 6px; cursor: pointer;
+      transition: background 0.2s;
     }
+    #dark-toggle:hover { background: #666; }
 
-    h1 {
-      font-size: 2em;
-      margin-bottom: 1em;
-    }
-
-    #dark-toggle {
-      margin-bottom: 2em;
-      padding: 10px 20px;
-      font-size: 14px;
-      background: #444;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    #dark-toggle:hover {
-      background: #666;
-    }
-
+    /* Slideshow */
     #slideshow img {
-      width: 90%;
-      max-width: 900px;
-      height: auto;
-      border: 6px solid #3498db;
-      border-radius: 12px;
-      margin-bottom: 40px;
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-      transition: transform 0.3s ease;
-    }
-
-    #slideshow img:hover {
-      transform: scale(1.02);
-    }
-
-    .gallery {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 24px;
-      padding: 0 1em;
-    }
-
-    .image-wrapper {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      max-width: 180px;
-      width: 100%;
-    }
-
-    .image-wrapper img {
-      width: 100%;
-      height: auto;
-      border: 3px solid #bdc3c7;
-      border-radius: 10px;
-      transition: all 0.2s ease-in-out;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      width: 90%; max-width: 900px; border: 6px solid #3498db;
+      border-radius: 12px; margin-bottom: 2em; box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+      transition: transform 0.3s;
       cursor: pointer;
     }
+    #slideshow img:hover { transform: scale(1.02); }
 
-    .image-wrapper img:hover {
-      border-color: #3498db;
-      transform: scale(1.05);
+    /* Gallery grid */
+    .gallery { display: flex; flex-wrap: wrap; justify-content: center; gap: 24px; padding: 0 1em; }
+    .image-wrapper {
+      display: flex; flex-direction: column; align-items: center;
+      max-width: 180px; width: 100%;
     }
+    .image-wrapper img {
+      width: 100%; border: 3px solid #bdc3c7; border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: pointer;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .image-wrapper img:hover { border-color: #3498db; transform: scale(1.05); }
 
     .save-button {
-      margin-top: 10px;
-      font-size: 14px;
-      background-color: #3498db;
-      color: #fff;
-      padding: 6px 12px;
-      border-radius: 6px;
-      text-decoration: none;
-      transition: background-color 0.3s ease;
-      width: 100%;
-      text-align: center;
+      margin-top: .5em; padding: .4em .8em; font-size: .9em;
+      background: #3498db; color: #fff; border-radius: 6px;
+      text-decoration: none; width: 100%; text-align: center;
+      transition: background 0.2s;
     }
+    .save-button:hover { background: #2980b9; }
 
-    .save-button:hover {
-      background-color: #2980b9;
-    }
+    body.dark .save-button { background: #1abc9c; }
+    body.dark .save-button:hover { background: #16a085; }
 
-    body.dark .save-button {
-      background-color: #1abc9c;
-    }
-
-    body.dark .save-button:hover {
-      background-color: #16a085;
-    }
-
-    body.dark #dark-toggle {
-      background: #ddd;
-      color: #000;
-    }
-
-    @media (max-width: 768px) {
-      h1 {
-        font-size: 1.6em;
-      }
-
-      .image-wrapper {
-        max-width: 45%;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .image-wrapper {
-        max-width: 90%;
-      }
-
-      .save-button {
-        font-size: 13px;
-        padding: 5px 10px;
-      }
-    }
+    @media(max-width: 768px) { .image-wrapper { max-width: 45%; } }
+    @media(max-width: 480px) { .image-wrapper { max-width: 90%; } }
   </style>
 </head>
 <body>
-  <h1>Sam and Annabelle's Wedding Gallery</h1>
+
+  <h1>Sam and Annabelle’s Wedding Gallery</h1>
   <button id="dark-toggle">Toggle Dark Mode</button>
 
   <div id="slideshow">
-    <img id="slide" src="" alt="Slideshow" />
+    <img id="slide" src="" alt="Slideshow">
   </div>
 
   <div class="gallery" id="gallery"></div>
@@ -156,106 +70,77 @@
   <script>
     const gallery = document.getElementById('gallery');
     const slide = document.getElementById('slide');
+    const toggle = document.getElementById('dark-toggle');
     const imageList = [];
-    const maxPhotos = 999;
-    const extensions = ['jpg', 'jpeg', 'png', 'webp'];
-    let currentIndex = 0;
+    const max = 999;
+    const exts = ['jpg','jpeg','png','webp'];
+    let idx = 0;
 
-    function checkImage(url) {
-      return new Promise((resolve) => {
+    function pad(n) { return n.toString().padStart(3,'0'); }
+    function check(src) {
+      return new Promise(res => {
         const img = new Image();
-        img.src = url;
-        img.onload = () => resolve(url);
-        img.onerror = () => resolve(null);
+        img.onload = () => res(src);
+        img.onerror = () => res(null);
+        img.src = src;
       });
     }
 
-    function padNumber(num, length) {
-      return num.toString().padStart(length, '0');
-    }
-
-    async function loadImages() {
-      for (let i = 1; i <= maxPhotos; i++) {
-        const baseName = `HotShots${padNumber(i, 3)}`;
-        for (const ext of extensions) {
-          const url = `images/${baseName}.${ext}`;
-          const result = await checkImage(url);
-          if (result) {
-            imageList.push(result);
-            addImageToGallery(result);
-            break;
-          }
+    async function loadImages(){
+      for(let i=1;i<=max;i++){
+        const name = `images/HotShots${pad(i)}`;
+        for(const e of exts){
+          const src = `${name}.${e}`;
+          const ok = await check(src);
+          if(ok){ imageList.push(ok); addGallery(ok); break; }
         }
       }
-
-      if (imageList.length > 0) {
-        startSlideshow();
-      }
+      if(imageList.length) { startSlide(); }
     }
 
-    function startSlideshow() {
+    function addGallery(src){
+      const div = document.createElement('div');
+      div.className = 'image-wrapper';
+      const img = document.createElement('img');
+      img.src = src;
+      img.onclick = () => { openFull(img); idx = imageList.indexOf(src); };
+      const a = document.createElement('a');
+      a.textContent = 'Save';
+      a.href = src;
+      a.download = '';
+      a.className = 'save-button';
+      div.append(img, a);
+      gallery.append(div);
+    }
+
+    function startSlide(){
       slide.src = imageList[0];
-      slide.addEventListener('click', () => openFullscreen(slide));
+      slide.onclick = () => openFull(slide);
       setInterval(() => {
-        currentIndex = (currentIndex + 1) % imageList.length;
-        slide.src = imageList[currentIndex];
+        idx = (idx + 1) % imageList.length;
+        slide.src = imageList[idx];
       }, 3000);
     }
 
-    function addImageToGallery(src) {
-      const wrapper = document.createElement('div');
-      wrapper.className = 'image-wrapper';
-
-      const img = document.createElement('img');
-      img.src = src;
-      img.addEventListener('click', () => {
-        openFullscreen(img);
-        currentIndex = imageList.indexOf(src);
-      });
-
-      const btn = document.createElement('a');
-      btn.textContent = 'Save';
-      btn.href = src;
-      btn.download = '';
-      btn.className = 'save-button';
-
-      wrapper.appendChild(img);
-      wrapper.appendChild(btn);
-      gallery.appendChild(wrapper);
+    function openFull(img){
+      if(img.requestFullscreen) img.requestFullscreen();
+      else if(img.webkitRequestFullscreen) img.webkitRequestFullscreen();
+      else if(img.msRequestFullscreen) img.msRequestFullscreen();
     }
 
-    function openFullscreen(img) {
-      if (img.requestFullscreen) {
-        img.requestFullscreen();
-      } else if (img.webkitRequestFullscreen) {
-        img.webkitRequestFullscreen();
-      } else if (img.msRequestFullscreen) {
-        img.msRequestFullscreen();
-      }
-    }
-
-    document.addEventListener('keydown', (e) => {
-      if (document.fullscreenElement && imageList.length > 0) {
-        if (e.key === 'ArrowRight') {
-          currentIndex = (currentIndex + 1) % imageList.length;
-          updateFullscreenImage();
-        } else if (e.key === 'ArrowLeft') {
-          currentIndex = (currentIndex - 1 + imageList.length) % imageList.length;
-          updateFullscreenImage();
-        }
+    document.addEventListener('keydown', e => {
+      if(document.fullscreenElement){
+        if(e.key==='ArrowRight') idx = (idx+1)%imageList.length, updateSlide();
+        if(e.key==='ArrowLeft') idx = (idx-1+imageList.length)%imageList.length, updateSlide();
       }
     });
 
-    function updateFullscreenImage() {
-      if (document.fullscreenElement && document.fullscreenElement.tagName === 'IMG') {
-        document.fullscreenElement.src = imageList[currentIndex];
-      }
+    function updateSlide(){
+      const fsImg = document.fullscreenElement;
+      if(fsImg && fsImg.tagName==='IMG') fsImg.src = imageList[idx];
     }
 
-    document.getElementById('dark-toggle').addEventListener('click', () => {
-      document.body.classList.toggle('dark');
-    });
-
+    toggle.onclick = () => document.body.classList.toggle('dark');
     loadImages();
   </script>
 </body>

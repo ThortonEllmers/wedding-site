@@ -162,7 +162,7 @@
     const fsNextBtn = document.getElementById('fs-next-btn');
     const swipeHint = document.getElementById('swipe-hint');
 
-    const imageList = Array.from({length: 500}, (_, i) => `images/HotShots${i + 1}.jpg`);
+    const imageList = Array.from({ length: 500 }, (_, i) => `images/HotShots${i + 1}.jpg`);
 
     let idx = 0;
     let slideshowList = [];
@@ -187,10 +187,16 @@
         const a = document.createElement('a');
         a.textContent = 'Save';
         a.href = src;
-        a.download = '';
+        // Generate unique filename: samandannabelle.live-<UUID>.<ext>
+        const ext = src.split('.').pop();
+        const id = typeof crypto.randomUUID === 'function'
+          ? crypto.randomUUID()
+          : Date.now().toString(36) + Math.random().toString(36).slice(2);
+        a.download = `samandannabelle.live-${id}.${ext}`;
         a.className = 'save-button';
 
         div.append(img, a);
+
         if (isPortrait) portraitGallery.append(div);
         else {
           gallery.append(div);
@@ -247,12 +253,18 @@
 
     document.addEventListener('keydown', e => {
       if (document.fullscreenElement && slideshowList.length > 0) {
-        if (e.key === 'ArrowRight') { idx = (idx + 1) % slideshowList.length; updateSlide(); }
-        if (e.key === 'ArrowLeft')  { idx = (idx - 1 + slideshowList.length) % slideshowList.length; updateSlide(); }
+        if (e.key === 'ArrowRight') { 
+          idx = (idx + 1) % slideshowList.length; 
+          updateSlide(); 
+        }
+        if (e.key === 'ArrowLeft') {
+          idx = (idx - 1 + slideshowList.length) % slideshowList.length; 
+          updateSlide(); 
+        }
       }
     });
 
-    let touchStartX=0, touchEndX=0;
+    let touchStartX = 0, touchEndX = 0;
     document.addEventListener('touchstart', e => touchStartX = e.changedTouches[0].screenX);
     document.addEventListener('touchend', e => {
       touchEndX = e.changedTouches[0].screenX;

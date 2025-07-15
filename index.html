@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Sam and Annabelle’s\nWedding Gallery</title>
+  <title>Sam and Annabelle’s Wedding Gallery</title>
   <!-- Script font for title & section headings -->
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
   <!-- Piexifjs for writing EXIF metadata -->
@@ -47,13 +47,19 @@
       display: flex; flex-direction: column; align-items: center;
       width: 100%;
     }
-    .image-wrapper img, .video-wrapper video {
+    .image-wrapper img,
+    .video-wrapper video,
+    .video-wrapper iframe {
       width: 100%; max-width: 180px;
+      aspect-ratio: 16/9;
       border: 3px solid #fff; border-radius: 10px;
       box-shadow: 0 4px 10px rgba(0,0,0,.1);
       cursor: pointer; transition: border-color .2s, transform .2s;
+      object-fit: cover;
     }
-    .image-wrapper img:hover, .video-wrapper video:hover {
+    .image-wrapper img:hover,
+    .video-wrapper video:hover,
+    .video-wrapper iframe:hover {
       border-color: #e0e0e0; transform: scale(1.05);
     }
     .save-button {
@@ -162,8 +168,8 @@
 
     const imageList = Array.from({ length: 500 }, (_, i) => `images/HotShots${i+1}.jpg`);
     const videoList = [
-      'https://drive.google.com/uc?export=download&id=1K4jAhd5pNLvvCBZP7mfZho24SNS60o6A',
-      'https://drive.google.com/uc?export=download&id=1K1YyUSyQtdyggsid2puE1rYzbjZ7xzdD'
+      'https://drive.google.com/file/d/1K4jAhd5pNLvvCBZP7mfZho24SNS60o6A/preview',
+      'https://drive.google.com/file/d/1K1YyUSyQtdyggsid2puE1rYzbjZ7xzdD/preview'
     ];
 
     let idx = 0, slideshowList = [];
@@ -175,8 +181,7 @@
         const div = document.createElement('div'); div.className = 'image-wrapper';
         const el = document.createElement('img'); el.src = src; el.loading = 'lazy';
         el.onclick = () => { openFull(el); idx = slideshowList.indexOf(src); };
-        const btn = document.createElement('a'); btn.textContent = 'Save';
-        btn.href = '#'; btn.className = 'save-button';
+        const btn = document.createElement('a'); btn.textContent = 'Save'; btn.href = '#'; btn.className = 'save-button';
         btn.onclick = e => { e.preventDefault(); downloadWithExif(src); };
         div.append(el, btn);
         if (isPortrait) portraitGallery.append(div);
@@ -187,8 +192,16 @@
 
     function addVideo(src) {
       const div = document.createElement('div'); div.className = 'video-wrapper';
-      const vid = document.createElement('video');
-      vid.src = src; vid.controls = true;
+      let vid;
+      if (/drive\.google\.com/.test(src)) {
+        vid = document.createElement('iframe');
+        vid.src = src;
+        vid.allowfullscreen = true;
+      } else {
+        vid = document.createElement('video');
+        vid.src = src;
+        vid.controls = true;
+      }
       vid.onclick = () => openFull(vid);
       const link = document.createElement('a');
       link.textContent = 'Download'; link.href = src; link.download = '';
@@ -222,9 +235,7 @@
     }
 
     fsNextBtn.onclick = () => {
-      if (document.fullscreenElement && slideshowList.length) {
-        idx = (idx + 1) % slideshowList.length; updateSlide();
-      }
+      if (document.fullscreenElement && slideshowList.length) { idx = (idx + 1) % slideshowList.length; updateSlide(); }
     };
 
     document.addEventListener('fullscreenchange', () => {

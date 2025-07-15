@@ -2,97 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Sam & Annabelle's Wedding – Live Stream</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Matangi:wght@300..900&family=Oswald:wght@200..700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-  <h1 class="wedding-title">
-    THE SMITH'S WEDDING
-  </h1>
+  <title>Sam and Annabelles</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
-    <body>
-      <section id="player-box">
-        <div>
-          <img
-            id="video-placeholder"
-            src="/assets/Image-wedding-start-image.png"
-            alt="The wedding stream will be live at 2pm on the 12th of July"
-            style="width: 100%; max-width: 100%; display: block;"
-          >
+<body>
+  <h1>Sam and Annabelle's Wedding Gallery</h1>
 
-          <video
-            id="wedding-video"
-            controls
-            autoplay
-            muted
-            playsinline
-            style="display: none;"
-          ></video>
-        </div>
+  <div id="slideshow">
+    <img id="slide" src="" alt="Slideshow" />
+  </div>
 
-        <div style="margin-top: 20px;">
-          <h2>Thanks for joining us on our special day!!</h2>
-          <p>
-            Send a photo to
-            <a href="mailto:wedding@samandannabelle.live?subject=Sam and Annabelle's Wedding Photos">
-              wedding@samandannabelle.live
-            </a>
-            of how you are celebrating with us today
-          </p>
-        </div>
-      </section>
+  <div class="gallery" id="gallery"></div>
 
-      <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-      <script>
-        const video = document.getElementById('wedding-video');
-        const placeholder = document.getElementById('video-placeholder');
-        const hlsUrl = 'https://stream.samandannabelle.live/hls/wedding.m3u8';
-
-        function hidePlaceholder() {
-          placeholder.style.display = 'none';
-          video.style.display = 'block';
-        }
-
-        function checkStreamAvailable() {
-          fetch(hlsUrl, { method: 'HEAD', cache: 'no-store' })
-            .then((res) => {
-              if (res.ok) {
-                clearInterval(checkInterval);
-                location.reload();
-              }
-            })
-            .catch(() => {
-              // Not live yet, dont display shit cunt.
-            });
-        }
-
-        let checkInterval = null;
-
-        if (Hls.isSupported()) {
-          const hls = new Hls({ lowLatencyMode: true });
-          hls.loadSource(hlsUrl);
-          hls.attachMedia(video);
-
-          hls.on(Hls.Events.MANIFEST_PARSED, function () {
-            video.play().catch(() => {});
-          });
-
-          hls.on(Hls.Events.FRAG_LOADED, hidePlaceholder);
-
-          hls.on(Hls.Events.ERROR, function (event, data) {
-            if (data.type === 'networkError' || data.fatal) {
-              checkInterval = setInterval(checkStreamAvailable, 10000);
-            }
-          });
-        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-          video.src = hlsUrl;
-          video.addEventListener('loadedmetadata', hidePlaceholder);
-          checkInterval = setInterval(checkStreamAvailable, 10000);
-        } else {
-          alert('Your browser does not support HLS playback.');
-        }
-      </script>
-    </body>
+  <script src="script.js"></script>
+</body>
 </html>

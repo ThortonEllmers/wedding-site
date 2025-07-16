@@ -38,7 +38,6 @@
       border: 6px solid #fff; border-radius: 12px;
       margin-bottom: 2em; box-shadow: 0 10px 20px rgba(0,0,0,.2);
       cursor: pointer; transition: transform .3s, opacity .5s;
-      position: relative; z-index: 1;
     }
     #slideshow img:hover { transform: scale(1.02); }
 
@@ -52,7 +51,6 @@
       display: flex; flex-direction: column; align-items: center;
       width: 100%;
     }
-    /* Portrait images keep natural aspect ratio */
     .image-wrapper img {
       width: 100%; max-width: 180px;
       height: auto; object-fit: contain;
@@ -60,7 +58,6 @@
       box-shadow: 0 4px 10px rgba(0,0,0,.1);
       cursor: pointer; transition: border-color .2s, transform .2s;
     }
-    /* Videos & embeds are 16:9 */
     .video-wrapper video,
     .video-wrapper iframe {
       width: 100%; max-width: 180px;
@@ -93,17 +90,18 @@
 
     .swipe-hint {
       display: none;
-      position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+      position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
       align-items: center; gap: 8px;
       background: rgba(0,0,0,.6); color: #fff;
       font-size: 14px; padding: 8px 12px; border-radius: 8px;
-      z-index:10000; animation: fadeIn .6s ease-in-out;
+      z-index:10000; pointer-events: none;
     }
     .swipe-hint img { width: 20px; height: 20px; }
     @keyframes fadeIn {
       from { opacity: 0; transform: translate(-50%, 20px); }
       to   { opacity: 1; transform: translate(-50%, 0); }
     }
+    .swipe-hint.show { display: flex; animation: fadeIn .6s ease-in-out; }
     @media (max-width:768px) { .image-wrapper, .video-wrapper { max-width:45%; } }
     @media (max-width:480px) { .image-wrapper, .video-wrapper { max-width:90%; } }
   </style>
@@ -162,7 +160,7 @@
         let n = bstr.length, u8arr = new Uint8Array(n);
         while(n--) u8arr[n] = bstr.charCodeAt(n);
         const newBlob = new Blob([u8arr], { type: mime });
-        const newURL  = URL.createObjectURL(newBlob);
+        const newURL = URL.createObjectURL(newBlob);
         const length = Math.floor(Math.random()*3)+3;
         const min    = 10**(length-1), max = 10**length-1;
         const id     = Math.floor(Math.random()*(max-min+1))+min;
@@ -177,12 +175,13 @@
       reader.readAsDataURL(blob);
     }
 
-    const gallery = document.getElementById('gallery');
+    const gallery         = document.getElementById('gallery');
     const portraitGallery = document.getElementById('portrait-gallery');
-    const videoGallery = document.getElementById('video-gallery');
-    const slide = document.getElementById('slide');
-    const fsNextBtn = document.getElementById('fs-next-btn');
-    const swipeHint = document.getElementById('swipe-hint');
+    const videoGallery    = document.getElementById('video-gallery');
+    const slideshow       = document.getElementById('slideshow');
+    const slide           = document.getElementById('slide');
+    const swipeHint       = document.getElementById('swipe-hint');
+    const fsNextBtn       = document.getElementById('fs-next-btn');
 
     const imageList = Array.from({ length: 500 }, (_, i) => `images/HotShots${i+1}.jpg`);
     const videoList = [
@@ -198,15 +197,18 @@
       img.onload = () => {
         const isPortrait = img.naturalHeight > img.naturalWidth * 1.3;
         const div = document.createElement('div'); div.className = 'image-wrapper';
-        const el = document.createElement('img'); el.src = src; el.loading = 'lazy';
-        el.onclick = () => { openFull(el); idx = slideshowList.indexOf(src); };
+        const el  = document.createElement('img'); el.src = src; el.loading = 'lazy';
+        el.onclick = () => { openFull(); idx = slideshowList.indexOf(src); };
         const btn = document.createElement('a');
         btn.textContent = 'Save'; btn.href = '#'; btn.className = 'save-button';
         btn.onclick = e => { e.preventDefault(); downloadWithExif(src); };
         div.append(el, btn);
 
         if (isPortrait) portraitGallery.append(div);
-        else { gallery.append(div); slideshowList.push(src); }
+        else {
+          gallery.append(div);
+          slideshowList.push(src);
+        }
 
         if (slideshowList.length === 1) startSlide();
       };
@@ -224,7 +226,7 @@
         vid.src = src;
         vid.controls = true;
       }
-      vid.onclick = () => openFull(vid);
+      vid.onclick = openFull;
 
       const desc = document.createElement('p');
       desc.textContent = videoDesc[i];
@@ -242,7 +244,7 @@
 
     function startSlide() {
       slide.src = slideshowList[0];
-      slide.onclick = () => openFull(slide);
+      slide.onclick = openFull;
       setInterval(() => {
         idx = (idx + 1) % slideshowList.length;
         slide.style.opacity = 0;
@@ -253,52 +255,49 @@
       }, 3000);
     }
 
-    function openFull(el) {
-      if (el.requestFullscreen) el.requestFullscreen();
-      else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-      else if (el.msRequestFullscreen) el.msRequestFullscreen();
+    function updateSlide() {
+      slide.style.opacity = 0;
+      setTimeout(() => {
+        slide.src = slideshowList[idx];
+        slide.style.opacity = 1;
+      }, 300);
     }
 
-    function updateSlide() {
-      const fsEl = document.fullscreenElement;
-      if (fsEl && fsEl.tagName === 'IMG') {
-        fsEl.style.opacity = 0;
-        setTimeout(() => {
-          fsEl.src = slideshowList[idx];
-          fsEl.style.opacity = 1;
-        }, 300);
-      }
+    function openFull() {
+      if (slideshow.requestFullscreen) slideshow.requestFullscreen();
+      else if (slideshow.webkitRequestFullscreen) slideshow.webkitRequestFullscreen();
+      else if (slideshow.msRequestFullscreen) slideshow.msRequestFullscreen();
     }
 
     document.addEventListener('fullscreenchange', () => {
-      if (document.fullscreenElement) {
-        swipeHint.style.display = 'flex';
+      if (document.fullscreenElement === slideshow) {
+        swipeHint.classList.add('show');
         fsNextBtn.style.display = 'block';
       } else {
-        swipeHint.style.display = 'none';
+        swipeHint.classList.remove('show');
         fsNextBtn.style.display = 'none';
       }
     });
 
     fsNextBtn.onclick = () => {
-      if (document.fullscreenElement && slideshowList.length) {
+      if (document.fullscreenElement === slideshow && slideshowList.length) {
         idx = (idx + 1) % slideshowList.length;
         updateSlide();
       }
     };
 
     document.addEventListener('keydown', e => {
-      if (document.fullscreenElement && slideshowList.length) {
+      if (document.fullscreenElement === slideshow && slideshowList.length) {
         if (e.key === 'ArrowRight') { idx = (idx + 1) % slideshowList.length; updateSlide(); }
         if (e.key === 'ArrowLeft')  { idx = (idx - 1 + slideshowList.length) % slideshowList.length; updateSlide(); }
       }
     });
 
     let startX = 0, endX = 0;
-    document.addEventListener('touchstart', e => { startX = e.changedTouches[0].screenX; });
-    document.addEventListener('touchend', e => {
+    slide.addEventListener('touchstart', e => { startX = e.changedTouches[0].screenX; });
+    slide.addEventListener('touchend', e => {
       endX = e.changedTouches[0].screenX;
-      if (document.fullscreenElement && slideshowList.length) {
+      if (document.fullscreenElement === slideshow && slideshowList.length) {
         const diff = endX - startX;
         if (Math.abs(diff) > 50) {
           idx = diff < 0

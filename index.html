@@ -30,11 +30,15 @@
       border-bottom: 2px solid #fff;
       padding-bottom: 4px;
     }
+    #slideshow {
+      position: relative;
+    }
     #slideshow img {
       width: 90%; max-width: 900px;
       border: 6px solid #fff; border-radius: 12px;
       margin-bottom: 2em; box-shadow: 0 10px 20px rgba(0,0,0,.2);
       cursor: pointer; transition: transform .3s, opacity .5s;
+      position: relative; z-index: 1;
     }
     #slideshow img:hover { transform: scale(1.02); }
 
@@ -82,17 +86,18 @@
     #fs-next-btn {
       display: none; position: fixed; bottom: 20px; right: 20px;
       padding: 10px 16px; font-size: 16px; background: #fff;
-      color: #456B8B; border: none; border-radius: 8px; z-index:9999;
+      color: #456B8B; border: none; border-radius: 8px; z-index:10000;
       font-weight: bold; transition: background .2s;
     }
     #fs-next-btn:hover { background: #f0f0f0; }
 
     .swipe-hint {
+      display: none;
       position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
-      display: false; align-items: center; gap: 8px;
+      align-items: center; gap: 8px;
       background: rgba(0,0,0,.6); color: #fff;
       font-size: 14px; padding: 8px 12px; border-radius: 8px;
-      z-index: 9999; animation: fadeIn .6s ease-in-out;
+      z-index:10000; animation: fadeIn .6s ease-in-out;
     }
     .swipe-hint img { width: 20px; height: 20px; }
     @keyframes fadeIn {
@@ -108,6 +113,11 @@
 
   <div id="slideshow">
     <img id="slide" src="" alt="Slideshow">
+    <div id="swipe-hint" class="swipe-hint">
+      <img src="https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/chevron-left.svg" alt="←" />
+      Swipe left/right
+      <img src="https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/chevron-right.svg" alt="→" />
+    </div>
   </div>
 
   <div class="gallery-section-title">Gallery</div>
@@ -120,11 +130,6 @@
   <div class="video-gallery" id="video-gallery"></div>
 
   <button id="fs-next-btn">Next</button>
-  <div id="swipe-hint" class="swipe-hint">
-    <img src="https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/chevron-left.svg" alt="Swipe Left" />
-    Swipe left/right
-    <img src="https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/chevron-right.svg" alt="Swipe Right" />
-  </div>
 
   <script>
     const forcedGPS = { lat: -43.478533, lon: 172.568187 };
@@ -172,24 +177,19 @@
       reader.readAsDataURL(blob);
     }
 
-    const gallery         = document.getElementById('gallery');
+    const gallery = document.getElementById('gallery');
     const portraitGallery = document.getElementById('portrait-gallery');
-    const videoGallery    = document.getElementById('video-gallery');
-    const slide           = document.getElementById('slide');
-    const fsNextBtn       = document.getElementById('fs-next-btn');
-    const swipeHint       = document.getElementById('swipe-hint');
+    const videoGallery = document.getElementById('video-gallery');
+    const slide = document.getElementById('slide');
+    const fsNextBtn = document.getElementById('fs-next-btn');
+    const swipeHint = document.getElementById('swipe-hint');
 
     const imageList = Array.from({ length: 500 }, (_, i) => `images/HotShots${i+1}.jpg`);
     const videoList = [
       'https://drive.google.com/file/d/1K4jAhd5pNLvvCBZP7mfZho24SNS60o6A/preview',
-      'https://drive.google.com/file/d/1K1YyUSyQtdyggsid2puE1rYzbjZ7xzdD/preview',
-      'https://drive.google.com/file/d/1K5yhT57htV6Ot1868bMR68wLFWQEGi4c/preview'
+      'https://drive.google.com/file/d/1K1YyUSyQtdyggsid2puE1rYzbjZ7xzdD/preview'
     ];
-    const videoDescriptions = [
-      'Bouquet Throw',
-      'Cake Cutting',
-      'Shoe Game'
-    ];
+    const videoDesc = ['Bouquet Throw', 'Cake Cutting'];
 
     let idx = 0, slideshowList = [];
 
@@ -198,7 +198,7 @@
       img.onload = () => {
         const isPortrait = img.naturalHeight > img.naturalWidth * 1.3;
         const div = document.createElement('div'); div.className = 'image-wrapper';
-        const el  = document.createElement('img'); el.src = src; el.loading = 'lazy';
+        const el = document.createElement('img'); el.src = src; el.loading = 'lazy';
         el.onclick = () => { openFull(el); idx = slideshowList.indexOf(src); };
         const btn = document.createElement('a');
         btn.textContent = 'Save'; btn.href = '#'; btn.className = 'save-button';
@@ -226,9 +226,8 @@
       }
       vid.onclick = () => openFull(vid);
 
-      // actual description
       const desc = document.createElement('p');
-      desc.textContent = videoDescriptions[i];
+      desc.textContent = videoDesc[i];
       desc.style.fontSize = '1em';
       desc.style.color = '#fff';
       desc.style.marginTop = '0.5em';
@@ -271,19 +270,22 @@
       }
     }
 
+    document.addEventListener('fullscreenchange', () => {
+      if (document.fullscreenElement) {
+        swipeHint.style.display = 'flex';
+        fsNextBtn.style.display = 'block';
+      } else {
+        swipeHint.style.display = 'none';
+        fsNextBtn.style.display = 'none';
+      }
+    });
+
     fsNextBtn.onclick = () => {
       if (document.fullscreenElement && slideshowList.length) {
         idx = (idx + 1) % slideshowList.length;
         updateSlide();
       }
     };
-
-    document.addEventListener('fullscreenchange', () => {
-      const disp = document.fullscreenElement ? 'block' : 'none';
-      fsNextBtn.style.display = disp;
-      swipeHint.style.display = disp;
-      if (disp === 'block') setTimeout(() => swipeHint.style.display = 'none', 4000);
-    });
 
     document.addEventListener('keydown', e => {
       if (document.fullscreenElement && slideshowList.length) {

@@ -1,133 +1,244 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Sam and Annabelle’s Wedding Gallery</title>
+  <!-- Script font for title & section headings -->
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+  <!-- Piexifjs for writing EXIF metadata -->
+  <script src="https://cdn.jsdelivr.net/npm/piexifjs@1.0.4/piexif.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Segoe UI', sans-serif; text-align: center; padding: 2em 1em; transition: background 0.3s, color 0.3s; background: #f0f0f0; color: #333; }
-    body.dark { background: #1e1e1e; color: #eee; }h1 { margin-bottom: 1em; }
-#dark-toggle {
-  margin-bottom: 1.5em; padding: .6em 1.2em; font-size: 1em;
-  background: #444; color: #fff; border: none; border-radius: 6px; cursor: pointer;
-}
-#dark-toggle:hover { background: #666; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding: 2em 1em;
+      background: linear-gradient(135deg, #456B8B, #7DAFD8);
+      color: #fff;
+    }
+    h1 {
+      font-family: 'Great Vibes', cursive;
+      font-size: 8em;
+      margin-bottom: .5em;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+    }
+    .gallery-section-title {
+      font-family: 'Great Vibes', cursive;
+      font-size: 4em;
+      margin: 2em 0 1em;
+      display: inline-block;
+      border-bottom: 2px solid #fff;
+      padding-bottom: 4px;
+    }
+    #slideshow img {
+      width: 90%; max-width: 900px;
+      border: 6px solid #fff; border-radius: 12px;
+      margin-bottom: 2em; box-shadow: 0 10px 20px rgba(0,0,0,.2);
+      cursor: pointer; transition: transform .3s, opacity .5s;
+    }
+    #slideshow img:hover { transform: scale(1.02); }
 
-#slideshow img {
-  width: 90%; max-width: 900px; border: 6px solid #3498db;
-  border-radius: 12px; margin-bottom: 2em; box-shadow: 0 10px 20px rgba(0,0,0,0.15);
-  cursor: pointer; transition: transform 0.3s;
-}
-#slideshow img:hover { transform: scale(1.02); }
+    .gallery, .portrait-gallery, .video-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px,1fr));
+      gap: 20px; padding: 0 1em; justify-items: center;
+      margin-bottom: 2em;
+    }
+    .image-wrapper, .video-wrapper {
+      display: flex; flex-direction: column; align-items: center;
+      width: 100%;
+    }
+    /* Portrait images keep natural aspect ratio */
+    .image-wrapper img {
+      width: 100%; max-width: 180px;
+      height: auto; object-fit: contain;
+      border: 3px solid #fff; border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,.1);
+      cursor: pointer; transition: border-color .2s, transform .2s;
+    }
+    /* Videos & embeds are 16:9 */
+    .video-wrapper video,
+    .video-wrapper iframe {
+      width: 100%; max-width: 180px;
+      aspect-ratio: 16/9;
+      border: 3px solid #fff; border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,.1);
+      cursor: pointer; transition: border-color .2s, transform .2s;
+      object-fit: cover;
+    }
+    .image-wrapper img:hover,
+    .video-wrapper video:hover,
+    .video-wrapper iframe:hover {
+      border-color: #e0e0e0; transform: scale(1.05);
+    }
+    .save-button {
+      margin-top: .5em; padding: .4em .8em; font-size: .9em;
+      background: #fff; color: #456B8B; border-radius: 6px;
+      text-decoration: none; width: 100%; text-align: center;
+      font-weight: bold; transition: background .2s;
+    }
+    .save-button:hover { background: #f0f0f0; }
 
-.gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 20px;
-  padding: 0 1em;
-  justify-items: center;
-}
-.image-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-}
-.image-wrapper img {
-  width: 100%;
-  max-width: 180px;
-  height: auto;
-  object-fit: contain;
-  border: 3px solid #bdc3c7;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  cursor: pointer;
-  transition: border-color 0.2s, transform 0.2s;
-}
-.image-wrapper img:hover { border-color: #3498db; transform: scale(1.05); }
+    #fs-next-btn {
+      display: none; position: fixed; bottom: 20px; right: 20px;
+      padding: 10px 16px; font-size: 16px; background: #fff;
+      color: #456B8B; border: none; border-radius: 8px; z-index:9999;
+      font-weight: bold; transition: background .2s;
+    }
+    #fs-next-btn:hover { background: #f0f0f0; }
 
-.save-button {
-  margin-top: .5em; padding: .4em .8em; font-size: .9em;
-  background: #3498db; color: #fff; border-radius: 6px;
-  text-decoration: none; width: 100%; text-align: center;
-}
-.save-button:hover { background: #2980b9; }
-
-body.dark .save-button { background: #1abc9c; }
-body.dark .save-button:hover { background: #16a085; }
-
-#fs-next-btn {
-  display: none;
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  padding: 10px 16px;
-  font-size: 16px;
-  background: #3498db;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  z-index: 9999;
-}
-
-@media(max-width: 768px) { .image-wrapper { max-width: 45%; } }
-@media(max-width: 480px) { .image-wrapper { max-width: 90%; } }
-
+    .swipe-hint {
+      position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+      display: false; align-items: center; gap: 8px;
+      background: rgba(0,0,0,.6); color: #fff;
+      font-size: 14px; padding: 8px 12px; border-radius: 8px;
+      z-index: 9999; animation: fadeIn .6s ease-in-out;
+    }
+    .swipe-hint img { width: 20px; height: 20px; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translate(-50%, 20px); }
+      to   { opacity: 1; transform: translate(-50%, 0); }
+    }
+    @media (max-width:768px) { .image-wrapper, .video-wrapper { max-width:45%; } }
+    @media (max-width:480px) { .image-wrapper, .video-wrapper { max-width:90%; } }
   </style>
 </head>
 <body>
   <h1>Sam and Annabelle’s Wedding Gallery</h1>
-  <button id="dark-toggle">Toggle Dark Mode</button>  <div id="slideshow">
-    <img id="slide" src="" alt="Slideshow">
-  </div>  <div class="gallery" id="gallery"></div>
-  <button id="fs-next-btn">Next</button>  <script>
-    const gallery = document.getElementById('gallery');
-    const slide = document.getElementById('slide');
-    const toggle = document.getElementById('dark-toggle');
-    const fsNextBtn = document.getElementById('fs-next-btn');
 
-    const imageList = [
-      "images/HotShots347.jpg",
-      "images/HotShots349.jpg",
-      "images/HotShots350.jpg",
-      "images/HotShots357.jpg",
-      "images/HotShots358.jpg",
-      "images/HotShots359.jpg",
-      "images/HotShots360.jpg",
-      "images/HotShots361.jpg",
-      "images/HotShots362.jpg"
+  <div id="slideshow">
+    <img id="slide" src="" alt="Slideshow">
+  </div>
+
+  <div class="gallery-section-title">Gallery</div>
+  <div class="gallery" id="gallery"></div>
+
+  <div class="gallery-section-title">Portrait Photos</div>
+  <div class="portrait-gallery" id="portrait-gallery"></div>
+
+  <div class="gallery-section-title">Videos</div>
+  <div class="video-gallery" id="video-gallery"></div>
+
+  <button id="fs-next-btn">Next</button>
+  <div id="swipe-hint" class="swipe-hint">
+    <img src="https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/chevron-left.svg" alt="Swipe Left" />
+    Swipe left/right
+    <img src="https://cdn.jsdelivr.net/gh/tabler/tabler-icons/icons/chevron-right.svg" alt="Swipe Right" />
+  </div>
+
+  <script>
+    const forcedGPS = { lat: -43.478533, lon: 172.568187 };
+
+    function toDMSRational(dec) {
+      const deg = Math.floor(Math.abs(dec));
+      const min = Math.floor((Math.abs(dec) - deg) * 60);
+      const sec = Math.round(((Math.abs(dec) - deg) * 60 - min) * 60 * 100) / 100;
+      return [[deg,1],[min,1],[sec*100,100]];
+    }
+
+    async function downloadWithExif(src) {
+      const res = await fetch(src);
+      const blob = await res.blob();
+      const reader = new FileReader();
+      reader.onload = () => {
+        const dataURL = reader.result;
+        const zeroth={}, exif={}, gps={};
+        gps[piexif.GPSIFD.GPSVersionID]   = [2,3,0,0];
+        gps[piexif.GPSIFD.GPSLatitudeRef]  = forcedGPS.lat < 0 ? 'S' : 'N';
+        gps[piexif.GPSIFD.GPSLatitude]     = toDMSRational(forcedGPS.lat);
+        gps[piexif.GPSIFD.GPSLongitudeRef] = forcedGPS.lon < 0 ? 'W' : 'E';
+        gps[piexif.GPSIFD.GPSLongitude]    = toDMSRational(forcedGPS.lon);
+        const exifObj = { '0th':zeroth, Exif:exif, GPS:gps };
+        const exifBytes = piexif.dump(exifObj);
+        const newDataURL = piexif.insert(exifBytes, dataURL);
+        const parts = newDataURL.split(',');
+        const mime = parts[0].match(/:(.*?);/)[1];
+        const bstr = atob(parts[1]);
+        let n = bstr.length, u8arr = new Uint8Array(n);
+        while(n--) u8arr[n] = bstr.charCodeAt(n);
+        const newBlob = new Blob([u8arr], { type: mime });
+        const newURL  = URL.createObjectURL(newBlob);
+        const length = Math.floor(Math.random()*3)+3;
+        const min    = 10**(length-1), max = 10**length-1;
+        const id     = Math.floor(Math.random()*(max-min+1))+min;
+        const ext    = src.split('.').pop();
+        const filename = `samandannabelle.live-${id}.${ext}`;
+        const link = document.createElement('a');
+        link.href = newURL; link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      };
+      reader.readAsDataURL(blob);
+    }
+
+    const gallery         = document.getElementById('gallery');
+    const portraitGallery = document.getElementById('portrait-gallery');
+    const videoGallery    = document.getElementById('video-gallery');
+    const slide           = document.getElementById('slide');
+    const fsNextBtn       = document.getElementById('fs-next-btn');
+    const swipeHint       = document.getElementById('swipe-hint');
+
+    const imageList = Array.from({ length: 500 }, (_, i) => `images/HotShots${i+1}.jpg`);
+    const videoList = [
+      'https://drive.google.com/file/d/1K4jAhd5pNLvvCBZP7mfZho24SNS60o6A/preview',
+      'https://drive.google.com/file/d/1K1YyUSyQtdyggsid2puE1rYzbjZ7xzdD/preview',
+      'https://drive.google.com/file/d/1K5yhT57htV6Ot1868bMR68wLFWQEGi4c/preview'
+    ];
+    const videoDescriptions = [
+      'Bouquet Throw',
+      'Cake Cutting',
+      'Shoe Game'
     ];
 
-    let idx = 0;
-    let slideshowList = [];
+    let idx = 0, slideshowList = [];
 
-    function addGallery(src) {
-      const preloadImg = new Image();
-      preloadImg.src = src;
-      preloadImg.onload = () => {
-        const isPortrait = preloadImg.naturalHeight > preloadImg.naturalWidth * 1.3;
+    function addImage(src) {
+      const img = new Image(); img.src = src;
+      img.onload = () => {
+        const isPortrait = img.naturalHeight > img.naturalWidth * 1.3;
+        const div = document.createElement('div'); div.className = 'image-wrapper';
+        const el  = document.createElement('img'); el.src = src; el.loading = 'lazy';
+        el.onclick = () => { openFull(el); idx = slideshowList.indexOf(src); };
+        const btn = document.createElement('a');
+        btn.textContent = 'Save'; btn.href = '#'; btn.className = 'save-button';
+        btn.onclick = e => { e.preventDefault(); downloadWithExif(src); };
+        div.append(el, btn);
 
-        const div = document.createElement('div');
-        div.className = 'image-wrapper';
+        if (isPortrait) portraitGallery.append(div);
+        else { gallery.append(div); slideshowList.push(src); }
 
-        const img = document.createElement('img');
-        img.src = src;
-        img.onclick = () => {
-          openFull(img);
-          idx = slideshowList.indexOf(src);
-        };
-
-        const a = document.createElement('a');
-        a.textContent = 'Save';
-        a.href = src;
-        a.download = '';
-        a.className = 'save-button';
-
-        div.append(img, a);
-        gallery.append(div);
-
-        if (!isPortrait) slideshowList.push(src);
         if (slideshowList.length === 1) startSlide();
       };
+    }
+
+    function addVideo(src, i) {
+      const div = document.createElement('div'); div.className = 'video-wrapper';
+      let vid;
+      if (/drive\.google\.com/.test(src)) {
+        vid = document.createElement('iframe');
+        vid.src = src;
+        vid.allowFullscreen = true;
+      } else {
+        vid = document.createElement('video');
+        vid.src = src;
+        vid.controls = true;
+      }
+      vid.onclick = () => openFull(vid);
+
+      // actual description
+      const desc = document.createElement('p');
+      desc.textContent = videoDescriptions[i];
+      desc.style.fontSize = '1em';
+      desc.style.color = '#fff';
+      desc.style.marginTop = '0.5em';
+
+      const link = document.createElement('a');
+      link.textContent = 'Save'; link.href = src; link.download = '';
+      link.className = 'save-button';
+
+      div.append(vid, desc, link);
+      videoGallery.append(div);
     }
 
     function startSlide() {
@@ -135,46 +246,69 @@ body.dark .save-button:hover { background: #16a085; }
       slide.onclick = () => openFull(slide);
       setInterval(() => {
         idx = (idx + 1) % slideshowList.length;
-        slide.src = slideshowList[idx];
+        slide.style.opacity = 0;
+        setTimeout(() => {
+          slide.src = slideshowList[idx];
+          slide.style.opacity = 1;
+        }, 300);
       }, 3000);
     }
 
-    function openFull(img) {
-      if (img.requestFullscreen) img.requestFullscreen();
-      else if (img.webkitRequestFullscreen) img.webkitRequestFullscreen();
-      else if (img.msRequestFullscreen) img.msRequestFullscreen();
+    function openFull(el) {
+      if (el.requestFullscreen) el.requestFullscreen();
+      else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+      else if (el.msRequestFullscreen) el.msRequestFullscreen();
     }
-
-    document.addEventListener('keydown', e => {
-      if (document.fullscreenElement && slideshowList.length > 0) {
-        if (e.key === 'ArrowRight') {
-          idx = (idx + 1) % slideshowList.length;
-          updateSlide();
-        }
-        if (e.key === 'ArrowLeft') {
-          idx = (idx - 1 + slideshowList.length) % slideshowList.length;
-          updateSlide();
-        }
-      }
-    });
 
     function updateSlide() {
-      const fsImg = document.fullscreenElement;
-      if (fsImg && fsImg.tagName === 'IMG') fsImg.src = slideshowList[idx];
+      const fsEl = document.fullscreenElement;
+      if (fsEl && fsEl.tagName === 'IMG') {
+        fsEl.style.opacity = 0;
+        setTimeout(() => {
+          fsEl.src = slideshowList[idx];
+          fsEl.style.opacity = 1;
+        }, 300);
+      }
     }
 
-    toggle.onclick = () => document.body.classList.toggle('dark');
     fsNextBtn.onclick = () => {
-      if (document.fullscreenElement && slideshowList.length > 0) {
+      if (document.fullscreenElement && slideshowList.length) {
         idx = (idx + 1) % slideshowList.length;
         updateSlide();
       }
     };
 
     document.addEventListener('fullscreenchange', () => {
-      fsNextBtn.style.display = document.fullscreenElement ? 'block' : 'none';
+      const disp = document.fullscreenElement ? 'block' : 'none';
+      fsNextBtn.style.display = disp;
+      swipeHint.style.display = disp;
+      if (disp === 'block') setTimeout(() => swipeHint.style.display = 'none', 4000);
     });
 
-    imageList.forEach(addGallery);
-  </script></body>
+    document.addEventListener('keydown', e => {
+      if (document.fullscreenElement && slideshowList.length) {
+        if (e.key === 'ArrowRight') { idx = (idx + 1) % slideshowList.length; updateSlide(); }
+        if (e.key === 'ArrowLeft')  { idx = (idx - 1 + slideshowList.length) % slideshowList.length; updateSlide(); }
+      }
+    });
+
+    let startX = 0, endX = 0;
+    document.addEventListener('touchstart', e => { startX = e.changedTouches[0].screenX; });
+    document.addEventListener('touchend', e => {
+      endX = e.changedTouches[0].screenX;
+      if (document.fullscreenElement && slideshowList.length) {
+        const diff = endX - startX;
+        if (Math.abs(diff) > 50) {
+          idx = diff < 0
+            ? (idx + 1) % slideshowList.length
+            : (idx - 1 + slideshowList.length) % slideshowList.length;
+          updateSlide();
+        }
+      }
+    });
+
+    imageList.forEach(addImage);
+    videoList.forEach(addVideo);
+  </script>
+</body>
 </html>
